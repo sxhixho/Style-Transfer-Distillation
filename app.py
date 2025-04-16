@@ -221,3 +221,5 @@ if __name__ == '__main__':
     # os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
     # tf.get_logger().setLevel('ERROR')
     app.run(debug=True) # debug=True is helpful for development
+    
+    

@@ -4,20 +4,28 @@
   <meta charset="UTF-8">
   <title>Stylique</title>
   <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-  <!-- Google Fonts -->
+
+  <!-- Core Libraries -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&display=swap" rel="stylesheet">
-  <!-- Custom CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+  <!-- jQuery + Plugins -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.event.move/2.0.0/jquery.event.move.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/twentytwenty/css/twentytwenty.css">
+  <script src="https://cdn.jsdelivr.net/npm/twentytwenty/js/jquery.twentytwenty.js"></script>
+
+  <!-- App Styles -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body>
+<body id="top">
   <!-- Navbar -->
   <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
-      <a class="navbar-brand" href="{{ url_for('index') }}">
-        <img src="{{ url_for('static', filename='logo.png') }}" alt="Stylique Logo">
+      <a class="navbar-brand logo-link" href="#top">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Stylique Logo" class="logo-img">
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon" style="color: white;"></span>
@@ -26,20 +34,20 @@
         <ul class="navbar-nav ms-auto">
           <li class="nav-item"><a class="nav-link" href="#upload-section">Upload</a></li>
           <li class="nav-item"><a class="nav-link" href="#gallery-section">Gallery</a></li>
-          <!-- Add other nav links if needed -->
+          <li class="nav-item"><a class="nav-link" href="#featured-artwork">Artwork</a></li>
         </ul>
       </div>
     </div>
   </nav>
 
-  <!-- Header Section -->
+  <!-- Upload Section -->
   <section class="header-bar" id="upload-section">
     <div class="header-content">
       <div class="header-text">
         <h1>Style Your Image</h1>
-        <p>Upload your content image, choose a style (predefined or custom), set iterations, and see the magic!</p>
+        <p>Upload your content image, choose a style, and see the magic!</p>
 
-        <!-- Flash Messages -->
+        <!-- Flask Flash Messages -->
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
             {% for category, message in messages %}
@@ -51,29 +59,27 @@
           {% endif %}
         {% endwith %}
 
+        <!-- Upload Form -->
         <div class="upload-box">
           <form id="stylize-form" method="POST" action="{{ url_for('stylize') }}" enctype="multipart/form-data">
-            <!-- Hidden field for example content trigger -->
             <input type="hidden" name="use_example_content" id="use_example_content" value="false">
             <input type="hidden" name="example_content_filename" id="example_content_filename" value="{{ example_content_file if has_example else '' }}">
 
-            <!-- Content Image -->
+            <!-- Step 1: Content Image Upload -->
             <div class="mb-3">
               <label for="content_image_input" class="form-label">1. Choose Content Image:</label>
               <input type="file" name="content_image" class="form-control" id="content_image_input" accept="image/*">
               <small class="form-text text-muted">Or use the example below.</small>
             </div>
 
-            <!-- Example Button -->
             {% if has_example %}
             <div class="mb-3 text-center">
-                <button type="button" class="btn btn-secondary btn-sm" id="use-example-btn">Use Example Content & First Style</button>
-                <p id="example-info" class="form-text text-muted mt-1" style="display: none;">Using example content: {{ example_content_file }}</p>
+              <button type="button" class="btn btn-secondary btn-sm" id="use-example-btn">Use Example Content & First Style</button>
+              <p id="example-info" class="form-text text-muted mt-1" style="display: none;">Using example content: {{ example_content_file }}</p>
             </div>
             {% endif %}
 
-
-            <!-- Style Choice -->
+            <!-- Step 2: Style Source Selection -->
             <div class="mb-3">
               <label class="form-label">2. Choose Style Source:</label>
               <div>
@@ -86,7 +92,7 @@
               </div>
             </div>
 
-            <!-- Predefined Style Dropdown -->
+            <!-- Style Options -->
             <div class="mb-3" id="predefined-style-section">
               <label for="predefined_style_select" class="form-label">Select Predefined Style:</label>
               <select name="predefined_style" id="predefined_style_select" class="form-select">
@@ -94,9 +100,9 @@
                 {% for style in predefined_styles %}
                   <option value="{{ style.filename }}">{{ style.display_name }}</option>
                 {% endfor %}
-                 {% if not predefined_styles %}
-                    <option value="" disabled>No styles found in static/styles</option>
-                 {% endif %}
+                {% if not predefined_styles %}
+                  <option value="" disabled>No styles found in static/styles</option>
+                {% endif %}
               </select>
             </div>
 
@@ -106,27 +112,91 @@
               <input type="file" name="custom_style_image" id="custom_style_input" class="form-control" accept="image/*">
             </div>
 
-            <!-- Iterations -->
+            <!-- Step 3 & 4: Iteration Settings -->
             <div class="row mb-3">
               <div class="col-md-6">
                 <label for="teacher_iterations_input" class="form-label">3. Teacher Iterations:</label>
                 <input type="number" name="teacher_iterations" id="teacher_iterations_input" class="form-control" value="50" min="1" max="1000">
-                <small class="form-text text-muted">More = slower, potentially better (VGG/Optimization)</small>
+                <small class="form-text text-muted">More = slower, potentially better (VGG)</small>
               </div>
               <div class="col-md-6">
                 <label for="student_iterations_input" class="form-label">4. Student Iterations:</label>
                 <input type="number" name="student_iterations" id="student_iterations_input" class="form-control" value="1" min="1" max="10">
-                 <small class="form-text text-muted">More = slower, refines output (Fast Model)</small>
-             </div>
+                <small class="form-text text-muted">More = slower, refines output (Fast Model)</small>
+              </div>
             </div>
 
-            <!-- Submit Button -->
+            <!-- Submit -->
             <button type="submit" class="btn btn-primary w-100 mt-2">Stylize Image</button>
           </form>
         </div>
       </div>
+
+      <!-- Example Preview Image -->
       <div class="header-example-image text-center mt-4 mt-lg-0">
         <img src="{{ url_for('static', filename='example.png') }}" alt="Example stylized" class="example-image">
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="how-it-works text-center py-5">
+    <div class="container">
+      <h2 class="how-it-works-title mb-5 fw-bold">Customize your design now</h2>
+      <p class="how-subtitle mb-5">How it works?</p>
+
+      <div class="d-flex flex-wrap justify-content-center align-items-center gap-5 how-it-works-flow position-relative">
+
+        <!-- Step 1: Upload Image -->
+        <div class="how-step position-relative">
+          <div class="flip-card">
+            <div class="flip-inner">
+              <img src="{{ url_for('static', filename='image.jfif') }}" alt="Upload Image" class="how-image front">
+              <img src="{{ url_for('static', filename='mountain.jpg') }}" alt="Hover Image" class="how-image back">
+            </div>
+          </div>
+          <div class="step-number">1</div>
+          <h5 class="fw-semibold">Upload your image</h5>
+        </div>
+
+        <!-- Arrow 1 -->
+        <img src="{{ url_for('static', filename='arrow.png') }}" class="fancy-arrow" alt="Arrow">
+
+        <!-- Step 2: Choose Style -->
+        <div class="how-step position-relative">
+          <div class="flip-card">
+            <div class="flip-inner">
+              <img src="{{ url_for('static', filename='style.png') }}" alt="Choose Style" class="how-image front">
+              <img src="{{ url_for('static', filename='mystyle.jpg') }}" alt="Hover Style" class="how-image back">
+            </div>
+          </div>
+          <div class="step-number">2</div>
+          <h5 class="fw-semibold">Choose your style</h5>
+        </div>
+
+        <!-- Arrow 2 -->
+        <img src="{{ url_for('static', filename='arrow.png') }}" class="fancy-arrow" alt="Arrow">
+
+        <!-- Step 3: Magic Happens -->
+        <div class="how-step position-relative">
+          <div class="flip-card">
+            <div class="flip-inner">
+              <img src="{{ url_for('static', filename='magic.png') }}" alt="Magic" class="how-image front">
+              <img src="{{ url_for('static', filename='result.png') }}" alt="Stylized Result" class="how-image back">
+            </div>
+          </div>
+          <div class="step-number">3</div>
+          <h5 class="fw-semibold">Magic ✨</h5>
+        </div>
+
+        <!-- Upload CTA Button -->
+        <div class="w-100 text-center mt-1">
+          <a href="#upload-section" class="btn btn-primary btn-lg scroll-to-upload d-inline-flex align-items-center gap-2">
+            <img src="{{ url_for('static', filename='upload-icon.jpg') }}" alt="Upload Icon" width="24" height="24">
+            Upload Image
+          </a>
+        </div>
+
       </div>
     </div>
   </section>
@@ -144,25 +214,110 @@
     </div>
   </section>
 
+  <!-- Featured Artwork Curtain Slider Section -->
+  <section class="featured-artwork text-center py-5" id="featured-artwork">
+    <div class="container">
+      <h2 class="featured-title mb-4">Featured Artwork</h2>
+      <div class="curtain-gallery-wrapper position-relative">
+        <button class="nav-arrow" id="prev-artwork">❮</button>
+        <div class="curtain-display"></div>
+        <button class="nav-arrow" id="next-artwork">❯</button>
+      </div>
+    </div>
+  </section>
+
   <!-- Footer -->
   <footer>
-    <img src="{{ url_for('static', filename='logo.png') }}" alt="Stylique Logo">
+    <a href="#top">
+      <img src="{{ url_for('static', filename='logo.png') }}" alt="Stylique Logo" class="logo-img">
+    </a>
     <p>© 2025 Stylique. All Rights Reserved.</p>
   </footer>
 
-  <!-- Bootstrap JS Bundle -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+  <!-- Bootstrap Bundle JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-  <!-- Custom JS -->
+  <!-- Curtain Slider Logic -->
   <script>
-    // --- Style Gallery Carousel ---
+    const artworks = [
+      { before: 'artwork1.jpg', after: 'artwork1_after.png' },
+      { before: 'artwork2.jpg', after: 'artwork2_after.png' },
+      { before: 'artwork3.jpg', after: 'artwork3_after.png' },
+      { before: 'artwork4.jpg', after: 'artwork4_after.png' }
+    ];
+
+    let currentIndex = 0;
+
+    function loadArtwork(index) {
+      const display = document.querySelector('.curtain-display');
+      const base = `{{ url_for('static', filename='') }}`;
+
+      display.innerHTML = `
+        <div class="curtain-wrapper" id="curtain-wrapper">
+          <img src="${base}${artworks[index].before}" class="curtain-img" alt="Before">
+          <div class="curtain-overlay" id="curtain-overlay">
+            <img src="${base}${artworks[index].after}" class="curtain-img" alt="After">
+          </div>
+          <div class="slider-handle" id="slider-handle"></div>
+        </div>
+      `;
+
+      const wrapper = document.getElementById('curtain-wrapper');
+      const overlay = document.getElementById('curtain-overlay');
+      const handle = document.getElementById('slider-handle');
+
+      wrapper.addEventListener('mousemove', (e) => {
+        const rect = wrapper.getBoundingClientRect();
+        let x = e.clientX - rect.left;
+        x = Math.max(0, Math.min(x, rect.width));
+        const percent = (x / rect.width) * 100;
+        overlay.style.width = `${percent}%`;
+        handle.style.left = `${percent}%`;
+      });
+    }
+
+    document.getElementById('prev-artwork').addEventListener('click', () => {
+      currentIndex = (currentIndex - 1 + artworks.length) % artworks.length;
+      loadArtwork(currentIndex);
+    });
+
+    document.getElementById('next-artwork').addEventListener('click', () => {
+      currentIndex = (currentIndex + 1) % artworks.length;
+      loadArtwork(currentIndex);
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadArtwork(currentIndex);
+    });
+  </script>
+
+  <!-- Smooth Scroll for Upload Button -->
+  <script>
+    document.querySelectorAll('.scroll-to-upload').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('upload-section').scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+  </script>
+
+  <!-- Smooth Scroll for Logo Links -->
+  <script>
+    document.querySelectorAll('a[href="#top"]').forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        document.getElementById('top').scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+  </script>
+
+  <!-- Style Gallery Script -->
+  <script>
     let currentSlide = 0;
-    // Use the styles passed from Flask if available, otherwise use default
     const styles = [
-      // These are defaults if Flask doesn't provide any
       { name: "Mosaic", image: "{{ url_for('static', filename='styles/mosaic.jpg') }}", descLeft: "Ancient Art", descRight: "Technique using small pieces" },
       { name: "Mona Lisa", image: "{{ url_for('static', filename='styles/monalisa.jpg') }}", descLeft: "High Renaissance", descRight: "Famous for sfumato" },
-      { name: "Starry Night", image: "{{ url_for('static', filename='styles/night.jpg') }}", descLeft: "Post-Impressionism", descRight: "Expressive brushwork" },
+      { name: "The Scream", image: "{{ url_for('static', filename='styles/night.jpg') }}", descLeft: "Post-Impressionism", descRight: "Expressive brushwork" },
       { name: "The Great Wave", image: "{{ url_for('static', filename='styles/wave.jpg') }}", descLeft: "Ukiyo-e", descRight: "Japanese woodblock print" },
       { name: "Pixel Art", image: "{{ url_for('static', filename='styles/pixel.png') }}", descLeft: "Digital Art", descRight: "Blocky, retro aesthetic" },
     ];
@@ -170,12 +325,12 @@
     function renderSlide() {
       const container = document.getElementById('carousel');
       if (!container || styles.length === 0) {
-        if(container) container.innerHTML = '<p class="text-center text-white">No styles available to display.</p>';
+        container.innerHTML = '<p class="text-center text-white">No styles available to display.</p>';
         return;
       }
+
       const style = styles[currentSlide];
-      // Basic check for image orientation (can be improved)
-      const orientationClass = (style.image.includes('landscape') || style.image.includes('wave') || style.image.includes('pixel')) ? 'landscape' : '';
+      const orientationClass = (style.name === "The Great Wave" || style.name === "Pixel Art") ? 'landscape' : '';
 
       container.innerHTML = `
         <div class="style-item ${orientationClass}">
@@ -190,6 +345,11 @@
           <span class="style-text">${style.name}</span>
         </div>
       `;
+
+      setTimeout(() => {
+        const newItem = container.querySelector('.style-item');
+        if (newItem) newItem.classList.add('visible');
+      }, 50);
     }
 
     function showPreviousSlide() {
@@ -202,123 +362,10 @@
       renderSlide();
     }
 
-    // --- Form Logic ---
     document.addEventListener('DOMContentLoaded', function() {
-      // Initial render of the carousel
       renderSlide();
-
-      // Carousel button listeners
-      const prevBtn = document.getElementById('prev-style-btn');
-      const nextBtn = document.getElementById('next-style-btn');
-      if(prevBtn) prevBtn.addEventListener('click', showPreviousSlide);
-      if(nextBtn) nextBtn.addEventListener('click', showNextSlide);
-
-
-      // Style choice radio buttons
-      const predefinedRadio = document.getElementById('style_predefined_radio');
-      const customRadio = document.getElementById('style_custom_radio');
-      const predefinedSection = document.getElementById('predefined-style-section');
-      const customSection = document.getElementById('custom-style-section');
-      const customStyleInput = document.getElementById('custom_style_input');
-      const predefinedSelect = document.getElementById('predefined_style_select');
-
-      function toggleStyleSections() {
-        if (customRadio.checked) {
-          predefinedSection.style.display = 'none';
-          customSection.style.display = 'block';
-          customStyleInput.required = true; // Make custom upload required
-          predefinedSelect.required = false;
-        } else {
-          predefinedSection.style.display = 'block';
-          customSection.style.display = 'none';
-          customStyleInput.required = false;
-          predefinedSelect.required = true; // Make predefined select required
-        }
-      }
-
-      if (predefinedRadio && customRadio) {
-          predefinedRadio.addEventListener('change', toggleStyleSections);
-          customRadio.addEventListener('change', toggleStyleSections);
-          // Initial call to set the correct state
-          toggleStyleSections();
-      }
-
-
-      // Example button logic
-      const useExampleBtn = document.getElementById('use-example-btn');
-      const contentInput = document.getElementById('content_image_input');
-      const useExampleHiddenInput = document.getElementById('use_example_content');
-      const exampleInfoP = document.getElementById('example-info');
-
-      if (useExampleBtn && contentInput && predefinedSelect && predefinedSelect.options.length > 1) {
-          useExampleBtn.addEventListener('click', function() {
-              // Clear the file input visually (cannot set programmatically for security)
-              contentInput.value = null;
-              // Signal backend to use the example file
-              useExampleHiddenInput.value = 'true';
-              // Select the first *actual* style in the dropdown (index 1, after "Choose...")
-              predefinedSelect.selectedIndex = 1;
-              // Ensure predefined style is selected
-              predefinedRadio.checked = true;
-              toggleStyleSections(); // Update visibility based on radio button
-              // Show info text
-              if(exampleInfoP) exampleInfoP.style.display = 'block';
-              // Optional: Scroll to top or form
-              // document.getElementById('upload-section').scrollIntoView({ behavior: 'smooth' });
-               alert("Example content selected. The content file input is now ignored. Choose your style settings and click 'Stylize Image'.");
-          });
-      }
-
-       // Reset example flag if user selects a file manually
-       if (contentInput && useExampleHiddenInput && exampleInfoP) {
-            contentInput.addEventListener('change', function() {
-                if (contentInput.files.length > 0) {
-                    useExampleHiddenInput.value = 'false';
-                     exampleInfoP.style.display = 'none';
-                }
-            });
-       }
-
-       // Form validation feedback (basic)
-       const form = document.getElementById('stylize-form');
-        form.addEventListener('submit', function(event) {
-            let isValid = true;
-            // Check content image OR example usage
-            if (useExampleHiddenInput.value !== 'true' && !contentInput.files.length) {
-                 alert('Please select a content image or use the example.');
-                 isValid = false;
-                 contentInput.classList.add('is-invalid');
-             } else {
-                 contentInput.classList.remove('is-invalid');
-             }
-
-             // Check style selection
-             if (predefinedRadio.checked && !predefinedSelect.value) {
-                 alert('Please select a predefined style.');
-                 isValid = false;
-                 predefinedSelect.classList.add('is-invalid');
-             } else {
-                  predefinedSelect.classList.remove('is-invalid');
-             }
-
-             if (customRadio.checked && !customStyleInput.files.length) {
-                 alert('Please upload a custom style image.');
-                 isValid = false;
-                 customStyleInput.classList.add('is-invalid');
-             } else {
-                  customStyleInput.classList.remove('is-invalid');
-             }
-
-             if (!isValid) {
-                 event.preventDefault(); // Prevent form submission
-                 event.stopPropagation();
-             } else {
-                 // Optional: Show a loading indicator
-                 // document.getElementById('loading-indicator').style.display = 'block';
-             }
-             form.classList.add('was-validated'); // Use Bootstrap's validation styles
-         }, false);
-
+      document.getElementById('prev-style-btn').addEventListener('click', showPreviousSlide);
+      document.getElementById('next-style-btn').addEventListener('click', showNextSlide);
     });
   </script>
 

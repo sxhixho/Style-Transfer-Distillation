@@ -7,6 +7,11 @@ body {
   color: #333; /* Default text color */
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
+
 /* Navbar */
 .navbar {
   background-color: #003f63;
@@ -17,6 +22,50 @@ body {
   padding-bottom: 0;
   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
+
+.logo-img {
+  height: auto;
+  max-height: 60px;
+  width: auto;
+}
+@media (max-width: 768px) {
+  .logo-img {
+    max-height: 40px;
+  }
+}
+
+/* Base styling for logo image */
+.logo-img {
+  height: auto;
+  max-height: 70px;
+  width: auto;
+  transition: all 0.3s ease;
+}
+
+/* Responsive on small screens */
+@media (max-width: 768px) {
+  .logo-img {
+    max-height: 50px;
+  }
+}
+
+/* Add background color on hover */
+.logo-link {
+  padding: 5px 10px;
+  border-radius: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.logo-link:hover {
+  background-color: rgba(0, 123, 255, 0.08); /* Light blue */
+}
+
+.logo-link:hover .logo-img {
+  transform: scale(1.03);
+}
+
+
+
 
 .navbar-brand img {
   height: 100px; /* Adjusted for slightly smaller navbar */
@@ -136,16 +185,55 @@ body {
 /* Style Gallery Section */
 .style-gallery {
   position: relative;
-  padding: 80px 30px; /* More vertical padding, less horizontal */
-  /* background-image: url('../static/gallery-bg.png'); */ /* Check path if using */
-  background-color: #e9e9e9; /* Fallback background */
-  background-size: cover; /* Cover the area */
+  padding: 80px 30px;
+  background-image: url('../gallery-bg.png') ;
+  background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
+  color: #fff; /* Optional: White text for contrast */
   z-index: 0;
-  min-height: 700px; /* Adjusted height */
-  overflow: hidden; /* Prevent potential overflow issues */
 }
+
+.style-gallery::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.4); /* dark overlay */
+  z-index: 1;
+}
+
+.style-gallery > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Rotate frame background image for landscape orientation */
+.style-item.landscape .frame-container {
+  width: 440px; /* Wider for landscape */
+  height: 300px;
+  transform: rotate(90deg); /* Optional: rotate the entire frame */
+  transform-origin: center;
+}
+
+/* Re-rotate the framed image inside back to normal */
+.style-item.landscape .framed-style {
+  transform: rotate(-90deg);
+}
+
+/* Rotate the frame container for landscape styles */
+.style-item.landscape .frame-container {
+  transform: rotate(90deg);
+  transform-origin: center;
+  width: 440px;
+  height: 300px;
+}
+
+/* Unrotate the image inside the frame */
+.style-item.landscape .framed-style {
+  transform: rotate(-90deg);
+}
+
+
 /* Optional overlay if using background image */
 /* .style-gallery::before {
   content: "";
@@ -154,6 +242,32 @@ body {
   background-color: rgba(20, 20, 30, 0.5);
   z-index: 1;
 } */
+
+/* Smooth transition for image inside frame */
+.framed-style {
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  opacity: 1;
+}
+
+/* Smooth transition for descriptions and text */
+.style-desc,
+.style-text {
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  opacity: 1;
+}
+
+/* Animate container on entry */
+.style-item {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.4s ease;
+}
+
+.style-item.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 
 .style-gallery h2 {
   font-size: clamp(2.2rem, 4vw, 2.8rem); /* Responsive font size */
@@ -206,6 +320,154 @@ body {
   transform: scale(1.08);
 }
 
+/* How It Works Section */
+.how-it-works {
+  background: linear-gradient(145deg, #f0f4f8, #e0e7ee);
+  padding: 80px 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.how-it-works-title {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  color: #003f63;
+  position: relative;
+  z-index: 2;
+}
+
+.how-step {
+  text-align: center;
+  margin: 10px 20px;
+  position: relative;
+  width: 260px; /* fixed width */
+  min-height: 360px; /* Ensures text doesn't overlap */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.how-image {
+  width: 260px;
+  height: auto;
+  border-radius: 20px;
+  box-shadow: 0 20px 30px rgba(0, 63, 99, 0.3);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+.how-image:hover {
+  transform: scale(1.12);
+  box-shadow: 0 25px 40px rgba(0, 63, 99, 0.4);
+}
+
+
+.step-number {
+  position: absolute;
+  top: -15px;
+  left: -15px;
+  background: #003f63;
+  color: white;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.fancy-arrow {
+  width: 60px;
+  height: auto;
+  margin: 0 10px;
+  opacity: 0.9;
+  transform: rotate(5deg); /* Optional curve tilt */
+  transition: transform 0.3s ease;
+}
+.fancy-arrow:hover {
+  transform: scale(1.1) rotate(5deg);
+}
+
+/* Flip Animation */
+.flip-card {
+  width: 100%;
+  height: 260px; /* Exact height for image area */
+  perspective: 1200px;
+  margin-bottom: 15px; /* Space before heading */
+}
+.flip-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transition: transform 1s ease;
+  transform-style: preserve-3d;
+}
+
+.flip-card:hover .flip-inner {
+  transform: rotateY(180deg);
+}
+
+
+.how-image.front,
+.how-image.back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 20px;
+  box-shadow: 0 20px 30px rgba(0, 63, 99, 0.3);
+  top: 0;
+  left: 0;
+  backface-visibility: hidden;
+}
+
+.how-image.back {
+  transform: rotateY(180deg);
+}
+
+.step-number {
+  position: absolute;
+  top: -15px;
+  left: -15px;
+  background: #003f63;
+  color: white;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.scroll-to-upload {
+  padding: 12px 28px;
+  font-weight: 600;
+  font-size: 1.05rem;
+  border-radius: 12px;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.scroll-to-upload img {
+  margin-bottom: 2px;
+}
+
+.scroll-to-upload:hover {
+  background-color: #005f83;
+  box-shadow: 0 6px 18px rgba(0, 63, 99, 0.3);
+}
+
+.how-subtitle {
+  font-size: 1.2rem;
+  color: #444;
+  font-weight: 500;
+  margin-top: -10px;
+}
+
+
+
 #carousel {
   flex-grow: 1; /* Take remaining space */
   min-width: 0; /* Allow shrinking */
@@ -239,21 +501,34 @@ body {
 
 .frame-container {
   position: relative;
-  width: 300px; /* Adjusted size */
+  width: 300px;
   height: 370px;
-  flex-shrink: 0;
-  margin: 10px 0; /* Margin top/bottom */
+  background-image: url('../static/frame.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden; /* key to prevent image overflow */
+  border-radius: 12px;
 }
 .style-item.landscape .frame-container { /* Adjust for landscape if needed */
-  width: 370px;
+  width: 440px;
   height: 300px;
 }
+/* Rotate frame background for landscape styles */
+.style-item.landscape .frame-background {
+  object-fit: contain;
+}
+
 
 .frame-background {
   width: 100%;
   height: 100%;
   display: block;
   object-fit: contain; /* Contain frame within dimensions */
+  position: relative;
 }
 .framed-style {
   position: absolute;
@@ -261,9 +536,10 @@ body {
   width: 84%; height: 84%;
   object-fit: cover; /* Cover the inner area */
   border-radius: 4px;
-  cursor: url('../static/cursors/paintbrush.png') 5 5, auto; /* Check path */
+  cursor: url('../cursors/paintbrush.png') 5 5, auto; /* Check path */
   border: 1px solid rgba(0,0,0,0.1); /* Subtle border */
 }
+
 .style-text {
   font-size: 1.4rem; /* Adjusted size */
   font-weight: 600;
@@ -272,6 +548,301 @@ body {
   margin-top: 20px; /* More space above text */
   text-align: center;
 }
+
+/*Feature Artwork Section*/
+.featured-artwork {
+  background: linear-gradient(to right, #fdfdfd, #f0f0f0);
+  padding: 80px 20px;
+}
+
+.featured-title {
+  font-size: clamp(2rem, 4vw, 2.5rem);
+  font-weight: 700;
+  color: #003f63;
+}
+
+.featured-title {
+  font-size: clamp(2rem, 4vw, 2.5rem);
+  font-weight: 700;
+  color: #003f63;
+}
+
+.compare-container {
+  position: relative;
+  max-width: 700px;
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  cursor: ew-resize;
+}
+
+.compare-image {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: auto;
+}
+
+.compare-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.compare-image.after {
+  width: 50%;
+  overflow: hidden;
+  z-index: 2;
+  transition: width 0.1s ease-out;
+}
+.featured-artwork {
+  background: linear-gradient(to right, #fdfdfd, #f0f0f0);
+  padding: 80px 20px;
+}
+
+.featured-title {
+  font-size: clamp(2rem, 4vw, 2.5rem);
+  font-weight: 700;
+  color: #003f63;
+}
+
+.curtain-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+.curtain-wrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.curtain-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: auto;
+  width: 100%;
+}
+
+.curtain-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.curtain-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 50%; /* Controlled by slider */
+  overflow: hidden;
+  z-index: 2;
+  transition: width 0.3s ease;
+}
+
+.curtain-base {
+  z-index: 1;
+}
+
+#curtain-slider {
+  position: relative;
+  display: block;
+  width: 100%;
+  margin-top: 20px;
+  z-index: 3;
+}
+
+.curtain-wrapper {
+  position: relative;
+  height: auto;
+}
+
+.base-img,
+.curtain-overlay img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.curtain-container {
+  max-width: 700px;
+  margin: 0 auto;
+  position: relative;
+}
+
+
+
+
+
+
+
+.curtain-gallery-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.curtain-display {
+  flex: 1;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+}
+
+.curtain-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+.curtain-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.curtain-overlay {
+  width: 50%;
+  height: 100%;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  transition: width 0.25s ease;
+}
+
+.slider-handle {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 4px;
+  height: 100%;
+  background: white;
+  border-left: 2px solid #003f63;
+  border-right: 2px solid #003f63;
+  z-index: 3;
+  cursor: ew-resize;
+}
+
+.nav-arrow {
+  background-color: rgba(255,255,255,0.9);
+  border: 2px solid #003f63;
+  font-size: 2rem;
+  border-radius: 50%;
+  padding: 10px;
+  cursor: pointer;
+  transition: 0.3s ease;
+  z-index: 5;
+}
+.nav-arrow:hover {
+  background-color: #003f63;
+  color: white;
+}
+
+.slider-handle::before {
+  content: "↔";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.2rem;
+  color: #003f63;
+  font-weight: bold;
+}
+
+.curtain-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  margin-bottom: 20px;
+}
+
+.curtain-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.curtain-overlay {
+  width: 50%;
+  height: 100%;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: width 0.2s ease-out;
+  z-index: 2;
+}
+
+.slider-handle {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 4px;
+  height: 100%;
+  background: white;
+  border-left: 2px solid #003f63;
+  border-right: 2px solid #003f63;
+  cursor: ew-resize;
+  z-index: 3;
+  transition: left 0.1s ease-out;
+}
+
+.label {
+  position: absolute;
+  top: 10px;
+  padding: 6px 12px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  z-index: 4;
+  font-weight: 500;
+}
+
+.before-label {
+  left: 10px;
+}
+
+.after-label {
+  right: 10px;
+}
+
+
+
+
+
+
+
+
 
 /* Footer */
 footer {
@@ -328,7 +899,7 @@ footer p {
        height: 308px;
   }
    .style-item.landscape .frame-container {
-       width: 308px;
-       height: 250px;
+       width: 440px;
+       height: 320px;
   }
 }
