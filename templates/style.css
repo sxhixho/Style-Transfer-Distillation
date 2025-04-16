@@ -1,217 +1,354 @@
+/* General Body & Fonts */
 body {
-    background-color: #f0f0f0;
-    font-family: 'Inter', sans-serif;
-    margin: 0;
-    padding: 0;
-  }
-  
-  .navbar {
-    background-color: #003f63;
-    height: 70px;
-    display: flex;
-    align-items: center;
-  }
-  
-  .navbar-brand img {
-    height: 120px;
-  }
-  
-  .nav-link {
-    color: #e0e0e0 !important;
-    transition: all 0.3s ease;
-    border-radius: 5px;
-    padding: 8px 14px;
-    font-family: 'Inter', sans-serif;
-    font-weight: 700;
-    font-size: 16px;
-  }
-  
-  .nav-link:hover {
-    color: #003f63 !important;
-    background-color: #e0e0e0;
-  }
-  
-  .header-bar {
-    background-color: #000;
-    color: white;
-    padding: 60px 30px;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    gap: 50px;
-  }
-  
-  .header-text h1 {
-    font-size: 3.2rem;
-    font-weight: 800;
-    line-height: 1.2;
-    letter-spacing: -1px;
-    margin-bottom: 15px;
-  }
-  
-  .upload-box {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-    max-width: 500px;
-    margin-top: 20px;
-  }
-  
-  .btn-primary {
-    background-color: #003f63;
-    border: none;
-  }
-  
-  .example-image {
-    max-width: 380px;
-    border-radius: 15px;
-    box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
-  }
-  
-  /* Style Gallery */
-  .style-gallery {
-    position: relative;
-    padding: 60px 60px;
-    background-image: url('static/gallery-bg.png');
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-    z-index: 0;
-    min-height: 800px;
-  }
-  
-  .style-gallery::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-color: rgba(0, 0, 0, 0.3);
-    z-index: 1;
-  }
-  
-  .style-gallery h2 {
-    font-size: 2.8rem;
-    font-weight: 800;
-    margin-bottom: 50px;
-    color: white;
-    text-align: center;
-  }
-  
-  .style-gallery h2 .cinzel {
-    font-family: 'Cinzel', serif;
-    text-transform: none;
-  }
-  
-  .style-gallery-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: relative;
-    z-index: 2;
-    gap: 20px;
-  }
-  
-  .nav-arrow {
-    background-color: transparent;
-    border: 2px solid #003f63;
-    color: #003f63;
-    font-size: 2rem;
-    font-weight: 800;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    flex-shrink: 0;
-  }
-  
-  .nav-arrow:hover {
-    background-color: #ddd;
-    color: #003f63;
-    transform: scale(1.08);
-  }
-  
-  .style-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-  }
-  
-  .style-row {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 40px;
-    flex-wrap: wrap;
-  }
-  
-  .style-desc {
-    flex: 1;
-    padding: 0 30px;
-    font-size: 1rem;
-    color: white;
-    font-family: 'Inter', sans-serif;
-    text-align: center;
-    border-radius: 10px;
-    transition: background-color 0.3s ease;
-  }
-  
-  .style-desc:hover {
-    background-color: #eee;
-    color: #111;
-  }
-  
-  .frame-container {
-    position: relative;
-    width: 325px;
-    height: 400px;
-    flex-shrink: 0;
-  }
-  
-  .style-item.landscape .frame-container {
-    width: 400px;
-    height: 325px;
-  }
-  
-  .frame-background {
-    width: 100%;
-    height: 100%;
-    display: block;
-  }
-  
-  .framed-style {
-    position: absolute;
-    top: 8%;
-    left: 8%;
-    width: 84%;
-    height: 84%;
-    object-fit: cover;
-    border-radius: 4px;
-    cursor: url('static/cursors/paintbrush.png') 5 5, auto;
-  }
-  
-  .style-text {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: white;
-    font-family: 'Cinzel', serif;
-    margin-top: 15px;
-    text-align: center;
-  }
-  
-  footer {
-    background-color: #000;
-    color: #bbb;
-    text-align: center;
-    padding: 10px 10px;
-  }
-  
-  footer img {
-    height: 100px;
-  }
-  
+  background-color: #f0f0f0;
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
+  padding-top: 70px; /* Account for fixed navbar height */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Inter', sans-serif; /* Default heading font */
+}
+
+.cinzel {
+  font-family: 'Cinzel', serif;
+  text-transform: none; /* Override potential parent transforms */
+}
+
+/* Navbar */
+.navbar {
+  background-color: #003f63; /* Dark blue */
+  min-height: 70px; /* Use min-height */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  padding-top: 0; /* Remove default padding */
+  padding-bottom: 0;
+}
+
+.navbar-brand img {
+  height: 60px; /* Adjusted logo size */
+  width: auto;
+  margin: 5px 0; /* Vertical margin */
+}
+
+.navbar-toggler {
+  border-color: rgba(255, 255, 255, 0.5); /* Lighter border for toggler */
+}
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+
+.nav-link {
+  color: #e0e0e0 !important; /* Light grey text */
+  transition: all 0.3s ease;
+  border-radius: 5px;
+  padding: 10px 15px !important; /* Adjusted padding */
+  font-weight: 600; /* Slightly bolder */
+  font-size: 1rem;
+  margin-left: 5px; /* Spacing between links */
+}
+
+.nav-link:hover,
+.nav-link.active { /* Style for active link */
+  color: #ffffff !important; /* White on hover/active */
+  background-color: rgba(255, 255, 255, 0.15); /* Subtle background */
+}
+
+/* Header Section (Upload Form) */
+.header-bar {
+  background-color: #1a1a1a; /* Dark background */
+  color: white;
+  padding: 80px 0; /* Increased padding */
+  /* Removed flex properties, handled by container/row */
+}
+
+.header-text h1 {
+  font-size: 3rem; /* Slightly smaller H1 */
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -1px;
+  margin-bottom: 20px; /* Increased margin */
+  font-family: 'Cinzel', serif; /* Use Cinzel for main title */
+}
+.header-text .lead {
+  font-size: 1.1rem;
+  color: #ccc;
+}
+
+.upload-box {
+  background: white;
+  padding: 30px; /* Increased padding */
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+  color: #333; /* Dark text inside box */
+}
+
+.form-label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #444;
+}
+
+.form-check-label {
+  margin-right: 15px;
+  cursor: pointer;
+}
+
+/* Make radios slightly larger */
+.form-check-input[type=radio] {
+  width: 1.1em;
+  height: 1.1em;
+  margin-top: 0.2em;
+}
+
+.iteration-input {
+  max-width: 100px; /* Keep constrained width */
+  display: inline-block; /* Keep inline */
+  margin-left: 5px;
+}
+
+/* Make help text smaller and gray */
+.form-text {
+  font-size: 0.85rem;
+  color: #6c757d !important;
+}
+
+.btn-primary {
+  background-color: #005a8d; /* Slightly lighter blue for primary button */
+  border: none;
+  padding: 10px 20px;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.btn-primary:hover {
+  background-color: #003f63; /* Darker on hover */
+}
+
+.example-image {
+  max-width: 100%; /* Make responsive */
+  height: auto;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(180, 100, 255, 0.25); /* Softer shadow */
+  border: 3px solid #fff;
+}
+
+
+/* Style Gallery Section */
+.style-gallery {
+  position: relative;
+  padding: 80px 0; /* Adjusted padding */
+  background-color: #333; /* Fallback color */
+  background-image: url('static/gallery-bg.png'); /* Keep background */
+  background-size: cover; /* Use cover for better scaling */
+  background-position: center center;
+  background-repeat: no-repeat;
+  min-height: 700px; /* Adjusted min height */
+  z-index: 0; /* Keep stacking context */
+}
+
+/* Overlay for readability */
+.style-gallery::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0, 0, 0, 0.55); /* Darker overlay */
+  z-index: 1;
+}
+
+.style-gallery h2 {
+  font-size: 2.8rem;
+  font-weight: 800;
+  margin-bottom: 60px; /* Increased margin */
+  color: white;
+  text-align: center;
+  position: relative; /* Ensure text is above overlay */
+  z-index: 2;
+}
+
+.style-gallery-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative; /* Above overlay */
+  z-index: 2;
+  gap: 20px;
+}
+
+/* Navigation Arrows */
+.nav-arrow {
+  background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+  border: none; /* Remove border */
+  color: #333; /* Dark arrow color */
+  font-size: 2rem;
+  font-weight: 800;
+  width: 55px; /* Slightly smaller */
+  height: 55px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.nav-arrow:hover {
+  background-color: #fff; /* Solid white on hover */
+  color: #003f63; /* Blue arrow on hover */
+  transform: scale(1.08);
+}
+
+/* Carousel Item */
+.style-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 0 10px; /* Add some padding */
+}
+
+.style-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px; /* Reduced gap */
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+  width: 100%;
+}
+
+.style-desc {
+  flex: 1;
+  padding: 15px; /* Add padding */
+  font-size: 0.95rem; /* Slightly smaller desc text */
+  color: #f0f0f0; /* Light text color */
+  font-family: 'Inter', sans-serif;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.4); /* Dark semi-transparent background */
+  border-radius: 8px;
+  min-width: 180px; /* Ensure minimum width */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.style-desc:hover {
+  background-color: rgba(255, 255, 255, 0.9); /* Light background on hover */
+  color: #222; /* Dark text on hover */
+}
+
+/* Frame Container */
+.frame-container {
+  position: relative;
+  width: 300px; /* Adjusted size */
+  height: 370px; /* Adjusted size */
+  flex-shrink: 0;
+  margin: 10px 0; /* Add some vertical margin */
+}
+
+/* Adjust frame for landscape if needed (requires JS class toggle) */
+.style-item.landscape .frame-container {
+  width: 370px;
+  height: 300px;
+}
+
+.frame-background {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain; /* Ensure frame fits */
+}
+
+.framed-style {
+  position: absolute;
+  top: 10%; /* Adjust position within frame */
+  left: 10%; /* Adjust position within frame */
+  width: 80%;  /* Adjust size within frame */
+  height: 80%; /* Adjust size within frame */
+  object-fit: cover; /* Cover the inner area */
+  border-radius: 4px;
+  /* Removed cursor style - less intrusive */
+  /* cursor: url('static/cursors/paintbrush.png') 5 5, auto; */
+  background-color: #555; /* Background while image loads */
+}
+
+.style-text {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: white;
+  font-family: 'Cinzel', serif;
+  margin-top: 20px; /* Increased margin */
+  text-align: center;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.5); /* Add text shadow */
+}
+
+/* Footer */
+footer {
+  background-color: #1a1a1a; /* Match header background */
+  color: #bbb;
+  text-align: center;
+  padding: 20px 0; /* Increased padding */
+  margin-top: 0; /* Remove default margin if any */
+}
+
+footer img {
+  height: 70px; /* Adjusted footer logo size */
+  margin-bottom: 10px;
+}
+footer p {
+    margin-bottom: 0;
+    font-size: 0.9rem;
+}
+
+/* Utility Classes */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 991.98px) {
+    .header-text h1 {
+        font-size: 2.5rem;
+    }
+    .style-gallery h2 {
+        font-size: 2.2rem;
+    }
+    .style-row {
+        gap: 20px;
+    }
+    .nav-arrow {
+        width: 45px;
+        height: 45px;
+        font-size: 1.5rem;
+    }
+    .frame-container {
+        width: 250px;
+        height: 308px;
+    }
+    .style-text {
+        font-size: 1.3rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    body { padding-top: 60px; } /* Adjust padding for smaller navbar */
+    .navbar-brand img { height: 50px; }
+    .header-bar { padding: 60px 0; }
+    .header-text { text-align: center; }
+    .upload-box { padding: 20px; }
+    .style-gallery { padding: 60px 0; }
+    .style-gallery-content { gap: 10px; }
+    .nav-arrow { display: none; } /* Hide arrows on small screens, rely on swipe? */
+    .style-row { flex-direction: column; } /* Stack elements vertically */
+    .style-desc { min-width: 80%; margin-bottom: 15px; } /* Wider description */
+    .frame-container { width: 80%; max-width: 300px; height: auto; aspect-ratio: 300 / 370; } /* Responsive frame */
+}
