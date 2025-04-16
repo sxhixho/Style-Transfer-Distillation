@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Stylique</title>
+  <link rel="icon" type="image/png" href="static/favicon.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f0f0f0;
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Navbar */
+    .navbar {
+      background-color: #003f63;
+      height: 70px;
+      display: flex;
+      align-items: center;
+    }
+    .navbar-brand img {
+      height: 120px;
+    }
+    .nav-link {
+      color: #e0e0e0 !important;
+      transition: all 0.3s ease;
+      border-radius: 5px;
+      padding: 8px 14px;
+      font-weight: 700;
+      font-size: 16px;
+    }
+    .nav-link:hover {
+      color: #003f63 !important;
+      background-color: #e0e0e0;
+    }
+    .nav-item:not(:last-child) {
+      margin-right: 15px;
+    }
+
+    /* Header Section */
+    .header-bar {
+      background-color: #000;
+      color: white;
+      padding: 60px 30px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 50px;
+    }
+    .header-text h1 {
+      font-size: 3.2rem;
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: -1px;
+      margin-bottom: 15px;
+    }
+    .upload-box {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+      max-width: 500px;
+      margin-top: 20px;
+    }
+    .btn-primary {
+      background-color: #003f63;
+      border: none;
+    }
+    .example-image {
+      max-width: 380px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
+    }
+
+    /* Style Gallery Section */
+    .style-gallery {
+      position: relative;
+      padding: 60px 60px;
+      /* background-image: url('static/gallery-bg.png'); */
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+      z-index: 0;
+      min-height: 800px;
+    }
+    .style-gallery::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0, 0, 0, 0.3);
+      z-index: 1;
+    }
+    .style-gallery h2 {
+      font-size: 2.8rem;
+      font-weight: 800;
+      margin-bottom: 50px;
+      color: #000;
+      text-align: center;
+    }
+    .style-gallery h2 .cinzel {
+      font-family: 'Cinzel', serif;
+      text-transform: none;
+    }
+    .style-gallery-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      z-index: 2;
+      gap: 20px;
+    }
+
+    /* Navigation Arrows */
+    .nav-arrow {
+      background-color: transparent;
+      border: 2px solid #003f63;
+      color: #003f63;
+      font-size: 2rem;
+      font-weight: 800;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+    }
+    .nav-arrow:hover {
+      background-color: #ddd;
+      color: #003f63;
+      transform: scale(1.08);
+    }
+
+    .style-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+    .style-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+    .style-desc {
+      flex: 1;
+      padding: 0 30px;
+      font-size: 1rem;
+      color: #222;
+      text-align: center;
+    }
+    .frame-container {
+      position: relative;
+      width: 325px;
+      height: 400px;
+      flex-shrink: 0;
+    }
+    .style-item.landscape .frame-container {
+      width: 400px;
+      height: 325px;
+    }
+    .frame-background {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .framed-style {
+      position: absolute;
+      top: 8%;
+      left: 8%;
+      width: 84%;
+      height: 84%;
+      object-fit: cover;
+      border-radius: 4px;
+      cursor: url('static/cursors/paintbrush.png') 5 5, auto;
+    }
+    .style-text {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #000;
+      font-family: 'Cinzel', serif;
+      margin-top: 15px;
+      text-align: center;
+    }
+
+    /* Footer */
+    footer {
+      background-color: #000;
+      color: #bbb;
+      text-align: center;
+      padding: 10px;
+    }
+    footer img {
+      height: 100px;
+    }
+  </style>
+
+  <script>
+    // Art style content data
+    let currentSlide = 0;
+    const styles = [
+      {
+        name: "Mosaic Style",
+        descLeft: "Ancient Art / Byzantine / Romanesque",
+        image: "static/styles/mosaic.jpg",
+        descRight: "Mosaic is more of a technique than a singular art movement. It was widely used across many civilizations."
+      },
+      {
+        name: "Mona Lisa Style",
+        descLeft: "Famous oil painting on a poplar wood panel by Leonardo da Vinci. Realism with elements of High Renaissance.",
+        image: "static/styles/monalisa.jpg",
+        descRight: "Famous for sfumato, which softens transitions between colors and tones."
+      },
+      {
+        name: "Starry Night Style",
+        descLeft: "A renowned oil-on-canvas painting by Vincent van Gogh (1889). Post-Impressionism.",
+        image: "static/styles/night.jpg",
+        descRight: "Expressive brushwork, emotional intensity, vivid colors."
+      },
+      {
+        name: "Wave Style",
+        descLeft: "The Great Wave off Kanagawa is a woodblock print by Japanese ukiyo-e artist Hokusai (1831). Ukijo-e (Japanese woodblock print)",
+        image: "static/styles/wave.jpg",
+        descRight: "Nature, impermanence, human scale vs nature. Japanese Edo Period Art."
+      }
+    ];
+
+    // Render current style into DOM
+    function renderSlide() {
+      const container = document.getElementById('carousel');
+      const style = styles[currentSlide];
+      container.innerHTML = `
+        <div class="style-item">
+          <div class="style-row">
+            <div class="style-desc">${style.descLeft}</div>
+            <div class="frame-container">
+              <img src="static/frame.jpg" class="frame-background" alt="Frame">
+              <img src="${style.image}" class="framed-style" alt="${style.name}">
+            </div>
+            <div class="style-desc">${style.descRight}</div>
+          </div>
+          <span class="style-text">${style.name}</span>
+        </div>
+      `;
+    }
+
+    function showPreviousSlide() {
+      currentSlide = (currentSlide - 1 + styles.length) % styles.length;
+      renderSlide();
+    }
+
+    function showNextSlide() {
+      currentSlide = (currentSlide + 1) % styles.length;
+      renderSlide();
+    }
+
+    window.onload = renderSlide;
+  </script>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#top">
+        <img src="static/logo.png" alt="Stylique Logo">
+      </a>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="#upload">Upload</a></li>
+          <li class="nav-item"><a class="nav-link" href="#preview">Preview</a></li>
+          <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Header Section -->
+  <section class="header-bar" id="top">
+    <div class="header-text">
+      <h1>Style your image now</h1>
+      <p>Try it out</p>
+      <div class="upload-box">
+        <form method="POST" action="/stylize" enctype="multipart/form-data">
+          <div class="mb-3">
+            <label class="form-label">Choose your file:</label>
+            <input type="file" name="content" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Choose a style:</label>
+            <select name="style_name" class="form-select" required>
+              <option value="" disabled selected>Choose a style...</option>
+              <option value="mosaic.jpg">Mosaic</option>
+              <option value="monalisa.jpg">Mona Lisa</option>
+              <option value="night.jpg">Starry Night</option>
+              <option value="wave.jpg">Wave</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary w-100 mt-2">Stylize Image</button>
+        </form>
+      </div>
+    </div>
+    <div class="text-center mt-4">
+      <img src="/static/example.png" alt="Example stylized" class="example-image">
+    </div>
+  </section>
+
+  <!-- Style Gallery Section -->
+  <section class="style-gallery">
+    <h2>Looking for our <span class="cinzel">Styliques?</span></h2>
+    <div class="style-gallery-content">
+      <button class="nav-arrow" onclick="showPreviousSlide()">&#10094;</button>
+      <div id="carousel" class="flex-grow-1"></div>
+      <button class="nav-arrow" onclick="showNextSlide()">&#10095;</button>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <img src="static/logo.png" alt="Stylique Logo">
+    <p>&copy; 2025 Stylique All Rights Reserved.</p>
+  </footer>
+</body>
+</html>
