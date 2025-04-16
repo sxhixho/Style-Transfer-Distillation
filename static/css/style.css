@@ -1,0 +1,334 @@
+/* static/css/style.css */
+body {
+  background-color: #f0f0f0;
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
+  color: #333; /* Default text color */
+}
+
+/* Navbar */
+.navbar {
+  background-color: #003f63;
+  height: 70px; /* Fixed height */
+  display: flex;
+  align-items: center;
+  padding-top: 0;
+  padding-bottom: 0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.navbar-brand img {
+  height: 100px; /* Adjusted for slightly smaller navbar */
+  vertical-align: middle; /* Better alignment */
+  margin-top: 5px; /* Fine-tune vertical position */
+}
+
+.nav-link {
+  color: #e0e0e0 !important;
+  transition: all 0.3s ease;
+  border-radius: 5px;
+  padding: 8px 14px !important; /* Ensure padding */
+  font-weight: 700;
+  font-size: 16px;
+  margin: 0 5px; /* Spacing between links */
+}
+
+.nav-link:hover, .nav-link.active {
+  color: #003f63 !important;
+  background-color: #e0e0e0;
+}
+
+.navbar-toggler {
+   border-color: rgba(255, 255, 255, 0.1);
+}
+.navbar-toggler-icon {
+   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(224, 224, 224, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+
+/* Header Section */
+.header-bar {
+  background-color: #000;
+  color: white;
+  padding: 60px 30px;
+  display: flex; /* Use flexbox for layout */
+  align-items: center; /* Vertically center items */
+  justify-content: center; /* Horizontally center items */
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+  gap: 50px; /* Space between text and image */
+}
+
+.header-content { /* Wrapper for better control */
+   display: flex;
+   align-items: center;
+   justify-content: space-around; /* Space out content */
+   flex-wrap: wrap;
+   gap: 40px;
+   width: 100%;
+   max-width: 1200px; /* Limit max width */
+}
+
+.header-text {
+  flex: 1; /* Allow text block to grow */
+  min-width: 300px; /* Minimum width before wrapping */
+  max-width: 550px; /* Max width */
+}
+
+.header-text h1 {
+  font-size: clamp(2.5rem, 5vw, 3.2rem); /* Responsive font size */
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -1px;
+  margin-bottom: 15px;
+}
+.header-text p {
+  font-size: 1.1rem;
+  color: #ccc;
+  margin-bottom: 25px;
+}
+
+
+.upload-box {
+  background: #ffffff;
+  color: #333; /* Text color inside the box */
+  padding: 25px; /* More padding */
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  margin-top: 20px;
+}
+.upload-box .form-label {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.upload-box .form-control, .upload-box .form-select {
+  margin-bottom: 10px; /* Space below inputs */
+}
+.upload-box .form-text {
+  font-size: 0.85rem;
+}
+
+
+.btn-primary {
+  background-color: #003f63;
+  border: none;
+  padding: 10px 20px; /* Standard padding */
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+.btn-primary:hover {
+  background-color: #005f83; /* Darker shade on hover */
+}
+
+.header-example-image {
+  flex-basis: 380px; /* Preferred size for the image container */
+  flex-shrink: 0; /* Don't shrink image container */
+}
+
+.example-image {
+  max-width: 100%; /* Ensure image is responsive */
+  height: auto;
+  width: 380px; /* Maintain desired width */
+  border-radius: 15px;
+  box-shadow: 0 0 25px rgba(200, 0, 200, 0.35); /* Adjusted shadow */
+}
+
+/* Style Gallery Section */
+.style-gallery {
+  position: relative;
+  padding: 80px 30px; /* More vertical padding, less horizontal */
+  /* background-image: url('../static/gallery-bg.png'); */ /* Check path if using */
+  background-color: #e9e9e9; /* Fallback background */
+  background-size: cover; /* Cover the area */
+  background-position: center center;
+  background-repeat: no-repeat;
+  z-index: 0;
+  min-height: 700px; /* Adjusted height */
+  overflow: hidden; /* Prevent potential overflow issues */
+}
+/* Optional overlay if using background image */
+/* .style-gallery::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(20, 20, 30, 0.5);
+  z-index: 1;
+} */
+
+.style-gallery h2 {
+  font-size: clamp(2.2rem, 4vw, 2.8rem); /* Responsive font size */
+  font-weight: 800;
+  margin-bottom: 60px; /* More space below title */
+  color: #111; /* Dark text on light background */
+  text-align: center;
+  position: relative; /* Needed for z-index if using overlay */
+  z-index: 2;
+}
+
+.style-gallery h2 .cinzel {
+  font-family: 'Cinzel', serif;
+  text-transform: none; /* Keep original casing */
+  font-weight: 700;
+}
+
+.style-gallery-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  z-index: 2;
+  gap: 15px; /* Reduced gap between arrows and content */
+  max-width: 1100px; /* Max width for content */
+  margin: 0 auto; /* Center content */
+}
+
+/* Navigation Arrows */
+.nav-arrow {
+  background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white */
+  border: 2px solid #003f63;
+  color: #003f63;
+  font-size: 1.8rem; /* Slightly smaller */
+  font-weight: 800;
+  width: 55px; /* Slightly smaller */
+  height: 55px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+.nav-arrow:hover {
+  background-color: #fff; /* Solid white on hover */
+  color: #005f83;
+  transform: scale(1.08);
+}
+
+#carousel {
+  flex-grow: 1; /* Take remaining space */
+  min-width: 0; /* Allow shrinking */
+}
+
+.style-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 0 10px; /* Padding inside carousel item */
+}
+.style-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px; /* Reduced gap */
+  flex-wrap: wrap; /* Allow wrapping within item */
+  width: 100%;
+}
+.style-desc {
+  flex: 1;
+  padding: 10px 15px; /* Padding around description */
+  font-size: 0.95rem; /* Slightly smaller text */
+  color: #333; /* Dark text */
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.6); /* Light background */
+  border-radius: 8px;
+  min-width: 150px; /* Minimum width for desc */
+}
+
+.frame-container {
+  position: relative;
+  width: 300px; /* Adjusted size */
+  height: 370px;
+  flex-shrink: 0;
+  margin: 10px 0; /* Margin top/bottom */
+}
+.style-item.landscape .frame-container { /* Adjust for landscape if needed */
+  width: 370px;
+  height: 300px;
+}
+
+.frame-background {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain; /* Contain frame within dimensions */
+}
+.framed-style {
+  position: absolute;
+  top: 8%; left: 8%; /* Keep relative positioning */
+  width: 84%; height: 84%;
+  object-fit: cover; /* Cover the inner area */
+  border-radius: 4px;
+  cursor: url('../static/cursors/paintbrush.png') 5 5, auto; /* Check path */
+  border: 1px solid rgba(0,0,0,0.1); /* Subtle border */
+}
+.style-text {
+  font-size: 1.4rem; /* Adjusted size */
+  font-weight: 600;
+  color: #111; /* Dark text */
+  font-family: 'Cinzel', serif;
+  margin-top: 20px; /* More space above text */
+  text-align: center;
+}
+
+/* Footer */
+footer {
+  background-color: #000;
+  color: #bbb;
+  text-align: center;
+  padding: 20px 10px; /* More padding */
+}
+footer img {
+  height: 80px; /* Slightly smaller logo */
+  margin-bottom: 10px;
+}
+footer p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* Utility */
+.is-invalid {
+  border-color: #dc3545; /* Bootstrap's default invalid color */
+}
+.was-validated .form-control:invalid, .was-validated .form-select:invalid {
+   border-color: #dc3545;
+}
+.was-validated .form-control:valid, .was-validated .form-select:valid {
+   border-color: #198754;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .header-content {
+      flex-direction: column; /* Stack text and image */
+      text-align: center;
+  }
+  .header-example-image {
+       order: -1; /* Move image above text stack */
+       margin-bottom: 30px;
+  }
+  .style-gallery-content {
+      flex-direction: column; /* Stack arrows and carousel */
+  }
+  .nav-arrow {
+      margin-bottom: 15px;
+  }
+  .style-row {
+       gap: 15px; /* Smaller gap on mobile */
+  }
+  .style-desc {
+       min-width: 120px;
+       font-size: 0.9rem;
+  }
+  .frame-container {
+       width: 250px;
+       height: 308px;
+  }
+   .style-item.landscape .frame-container {
+       width: 308px;
+       height: 250px;
+  }
+}

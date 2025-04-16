@@ -1,4 +1,7 @@
-flask
 tensorflow
 pillow
 numpy
+Flask
+Werkzeug
+requests    # Good practice to include if used, even indirectly by tf.keras sometimes
+gunicorn    # Optional: For production deployment
