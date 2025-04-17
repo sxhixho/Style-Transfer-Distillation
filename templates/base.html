@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Stylique{% endblock %}</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+
+    <!-- Core Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <!-- App Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    {% block head_extra %}{% endblock %}
+</head>
+<body id="top" class="dark-theme"> <!-- Added dark-theme class -->
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg sticky-top">
+      <div class="container-fluid">
+        <a class="navbar-brand logo-link" href="{{ url_for('index') }}#top">
+          <!-- Use a logo suitable for dark backgrounds or add styling -->
+          <img src="{{ url_for('static', filename='logo.png') }}" alt="Stylique Logo" class="logo-img">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span> <!-- Icon color will be handled by CSS -->
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}#upload-section">Upload</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}#gallery-section">Gallery</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}#featured-artwork">Artwork</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container text-center">
+            <a href="#top" class="footer-logo-link">
+                 <!-- Use a logo suitable for dark backgrounds or add styling -->
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="Stylique Logo" class="footer-logo-img">
+            </a>
+            <p class="footer-text mt-2">© {% block year %}2025{% endblock %} Stylique. Modern Art Generation.</p>
+            <p class="footer-subtext">Experiment with Neural Style Transfer</p>
+        </div>
+    </footer>
+
+    <!-- Core JS Libraries -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Page Specific Scripts -->
+    {% block scripts %}{% endblock %}
+
+    <!-- General Scripts (Smooth Scroll, etc.) -->
+    <script>
+      // Smooth scroll for internal links
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          const href = this.getAttribute('href');
+          if (href.length > 1 && href !== '#' && document.querySelector(href)) { // Ensure it's a valid selector and not just '#'
+            e.preventDefault();
+            try { // Add try-catch for potentially invalid selectors passed to querySelector
+                 const targetElement = document.querySelector(href);
+                 if (targetElement) {
+                     targetElement.scrollIntoView({
+                         behavior: 'smooth'
+                     });
+                 }
+            } catch (error) {
+                console.error("Smooth scroll error:", error);
+            }
+            // Close navbar if open (mobile)
+            const navbarCollapse = document.getElementById('navbarNav');
+            if (navbarCollapse && navbarCollapse.classList.contains('show')) {
+              new bootstrap.Collapse(navbarCollapse).hide();
+            }
+          }
+        });
+      });
+
+       // Smooth scroll for logo link to top specifically
+       // Updated selector to avoid conflict with href="#" links
+       document.querySelectorAll('.logo-link[href$="#top"], .footer-logo-link[href$="#top"]').forEach(link => {
+          link.addEventListener('click', e => {
+              e.preventDefault();
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+              // Close navbar if open (mobile)
+              const navbarCollapse = document.getElementById('navbarNav');
+              if (navbarCollapse && navbarCollapse.classList.contains('show')) {
+                 new bootstrap.Collapse(navbarCollapse).hide();
+              }
+          });
+      });
+    </script>
+
+</body>
+</html>

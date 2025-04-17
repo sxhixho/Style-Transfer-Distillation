@@ -1,87 +1,137 @@
-<!-- templates/result.html -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Stylized Result</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-  <style>
-    body {
-      background-color: #1f1f2e;
-      color: #e0e0e0;
-      padding-top: 40px;
-      font-family: 'Inter', sans-serif;
-    }
-    .img-box { margin-bottom: 20px; background-color: #3f3f4e; padding: 10px; border-radius: 10px;}
-    img {
-        max-width: 100%;
-        height: auto; /* Maintain aspect ratio */
-        border-radius: 8px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-        display: block; /* Prevents bottom margin */
-        margin-left: auto;
-        margin-right: auto;
-    }
-    h2 { color: #ffffff; margin-bottom: 30px; font-weight: 700;}
-    h4 { margin-top: 15px; color: #fafafa; font-weight: 600;}
-    .card {
-        background-color: #2a2a3a;
-        border: 1px solid #444;
-        border-radius: 10px;
-        padding: 25px;
-        margin-bottom: 30px;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-    }
-    .card p { margin-bottom: 8px; font-size: 0.95rem; color: #c0c0c0;}
-    .card p strong { color: #e0e0e0; }
-    .btn-primary {
-        background-color: #005f83; /* Slightly adjusted color */
-        border: none;
-        padding: 10px 25px;
-        font-weight: 600;
-        transition: background-color 0.3s ease;
-    }
-    .btn-primary:hover {
-        background-color: #007faa;
-    }
-    .container { max-width: 1100px; }
-  </style>
-</head>
-<body>
-  <div class="container text-center">
-    <h2>Your Stylized Image Results</h2>
+{% extends "base.html" %}
 
-    <div class="row mt-5 justify-content-center">
-      <div class="col-lg-5 col-md-6">
-        <div class="card h-100">
-          <h4>Teacher Model (VGG/Optimization)</h4>
-          <div class="img-box">
-            <img src="{{ teacher_output_path }}" alt="Teacher Output">
-          </div>
-          <p><strong>Model Base:</strong> {{ teacher_size }}</p>
-          <p><strong>Processing Time:</strong> {{ teacher_time }} sec</p>
-          <p><strong>Iterations:</strong> {{ teacher_iterations }}</p>
-          <p><strong>Final Loss:</strong> {{ teacher_loss }}</p>
+{% block title %}Stylized Results - Stylique{% endblock %}
+
+{% block content %}
+<div class="container result-page py-5">
+  <h2 class="text-center mb-5 section-title">Your Stylized Image Results</h2>
+
+  <!-- Row for Original Images -->
+  <div class="row justify-content-center g-4 mb-5">
+    <div class="col-lg-5 col-md-6">
+      <div class="card result-card shadow-sm h-100">
+        <div class="card-header">
+          <h4 class="card-title mb-0 text-center">Original Content Image</h4>
+        </div>
+        <div class="card-body text-center">
+          <!-- Ensure original_content_path is not '#' if image should load -->
+          {% if original_content_path and original_content_path != '#' %}
+            <img src="{{ original_content_path }}" alt="Original Content Image" class="result-img img-fluid rounded mb-3">
+          {% else %}
+            <p class="text-muted my-5">Original content image not available.</p>
+          {% endif %}
+          <!-- Optional: Add filename if desired -->
+          <!-- <p class="text-muted small">Filename: {{ original_content_filename }}</p> -->
         </div>
       </div>
+    </div>
+    <div class="col-lg-5 col-md-6">
+       <div class="card result-card shadow-sm h-100">
+         <div class="card-header">
+            <h4 class="card-title mb-0 text-center">Style Image Used</h4>
+         </div>
+         <div class="card-body text-center">
+            {% if original_style_path and original_style_path != '#' %}
+              <img src="{{ original_style_path }}" alt="Style Image Used" class="result-img img-fluid rounded mb-3">
+            {% else %}
+               <p class="text-muted my-5">Style image not available.</p>
+            {% endif %}
+            <p class="text-muted small mt-auto">Style: {{ style_name }}</p>
+         </div>
+       </div>
+    </div>
+  </div>
 
-      <div class="col-lg-5 col-md-6">
-        <div class="card h-100">
-          <h4>Student Model (Fast Feed-Forward)</h4>
-          <div class="img-box">
-            <img src="{{ student_output_path }}" alt="Student Output">
-          </div>
-          <p><strong>Model Size:</strong> {{ student_size }}</p>
-          <p><strong>Processing Time:</strong> {{ student_time }} sec</p>
-          <p><strong>Iterations:</strong> {{ student_iterations }}</p>
-          <p><strong>Output Info:</strong> {{ student_loss }}</p> <!-- Displaying stats here -->
+  <hr class="my-5 result-divider">
+
+  <!-- Row for Generated Images -->
+  <div class="row justify-content-center g-4">
+    <div class="col-lg-5 col-md-6">
+      <div class="card result-card shadow-sm h-100">
+         <div class="card-header">
+            <h4 class="card-title mb-0 text-center">Teacher Model (Quality)</h4>
+         </div>
+        <div class="card-body">
+           {% if teacher_output_path and teacher_output_path != '#' %}
+              <img src="{{ teacher_output_path }}" alt="Teacher Output Image" class="result-img img-fluid rounded mb-3">
+           {% else %}
+              <p class="text-muted my-5">Teacher output not available.</p>
+           {% endif %}
+          <ul class="list-group list-group-flush result-stats">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Model Base:
+              <span class="badge stat-badge bg-secondary rounded-pill">{{ teacher_size }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Processing Time:
+              <span class="badge stat-badge bg-info rounded-pill">{{ teacher_time }} sec</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Iterations:
+              <span class="badge stat-badge bg-light text-dark rounded-pill">{{ teacher_iterations }}</span> <!-- Keep light badge readable -->
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Final Loss:
+              <span class="badge stat-badge bg-success rounded-pill">{{ teacher_loss }}</span>
+            </li>
+          </ul>
         </div>
       </div>
     </div>
 
-    <a href="{{ url_for('index') }}" class="btn btn-primary mt-4 mb-4">Try Another Image</a>
+    <div class="col-lg-5 col-md-6">
+       <div class="card result-card shadow-sm h-100">
+          <div class="card-header">
+             <h4 class="card-title mb-0 text-center">Student Model (Fast)</h4>
+          </div>
+         <div class="card-body">
+           {% if student_output_path and student_output_path != '#' %}
+              <img src="{{ student_output_path }}" alt="Student Output Image" class="result-img img-fluid rounded mb-3">
+           {% else %}
+              <p class="text-muted my-5">Student output not available.</p>
+           {% endif %}
+            <ul class="list-group list-group-flush result-stats">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                Model Size:
+                <span class="badge stat-badge bg-secondary rounded-pill">{{ student_size }}</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                Processing Time:
+                <span class="badge stat-badge bg-info rounded-pill">{{ student_time }} sec</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                Iterations:
+                <span class="badge stat-badge bg-light text-dark rounded-pill">{{ student_iterations }}</span> <!-- Keep light badge readable -->
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                Output Stats: <!-- Tooltip provides details -->
+                <span class="badge stat-badge bg-primary rounded-pill" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ student_loss_tooltip | default('Statistics unavailable') }}">
+                    {{ student_loss_display | default('N/A') }}
+                </span>
+                </li>
+            </ul>
+         </div>
+       </div>
+    </div>
   </div>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-</body>
-</html>
+
+  <div class="text-center mt-5">
+    <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg shadow-sm">
+      <i class="bi bi-arrow-left-circle me-2"></i>Try Another Stylization
+    </a>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <!-- Add Tooltip Initializer for result page -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+              return new bootstrap.Tooltip(tooltipTriggerEl)
+            })
+        });
+    </script>
+{% endblock %}

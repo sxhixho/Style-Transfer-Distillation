@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy as np
 import time, os, glob
 from PIL import Image
-from classes.DataProcessor import DataProcessor
+from DataProcessor import DataProcessor
 
 # Global configuration values for teacher process
 TEACHER_ITERATIONS = 10

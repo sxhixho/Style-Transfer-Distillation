@@ -1,373 +1,213 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Stylique</title>
-  <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+{% extends "base.html" %}
 
-  <!-- Core Libraries -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+{% block title %}Stylique - Neural Style Transfer{% endblock %}
 
-  <!-- jQuery + Plugins -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+{% block head_extra %}
+  <!-- jQuery Plugins for Featured Artwork Slider -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.event.move/2.0.0/jquery.event.move.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/twentytwenty/css/twentytwenty.css">
   <script src="https://cdn.jsdelivr.net/npm/twentytwenty/js/jquery.twentytwenty.js"></script>
+{% endblock %}
 
-  <!-- App Styles -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body id="top">
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg">
-    <div class="container-fluid">
-      <a class="navbar-brand logo-link" href="#top">
-        <img src="{{ url_for('static', filename='logo.png') }}" alt="Stylique Logo" class="logo-img">
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon" style="color: white;"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="#upload-section">Upload</a></li>
-          <li class="nav-item"><a class="nav-link" href="#gallery-section">Gallery</a></li>
-          <li class="nav-item"><a class="nav-link" href="#featured-artwork">Artwork</a></li>
-        </ul>
-      </div>
-    </div>
-  </nav>
 
+{% block content %}
   <!-- Upload Section -->
   <section class="header-bar" id="upload-section">
-    <div class="header-content">
-      <div class="header-text">
-        <h1>Style Your Image</h1>
-        <p>Upload your content image, choose a style, and see the magic!</p>
+    <div class="header-content container">
+      <div class="header-text text-center mx-auto">
+        <h1 class="display-4 fw-bolder mb-3">Neural Style Transfer</h1>
+        <p class="lead mb-4">Upload your photo, choose an artistic style, and let AI create a masterpiece.</p>
 
-        <!-- Flask Flash Messages -->
+        <!-- Flash Messages -->
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
-            {% for category, message in messages %}
-              <div class="alert alert-{{ category }} alert-dismissible fade show mt-3" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-              </div>
-            {% endfor %}
+            <div class="flash-messages-container mx-auto" style="max-width: 800px;">
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show mt-3 mb-3" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+            </div>
           {% endif %}
         {% endwith %}
 
-        <!-- Upload Form -->
-        <div class="upload-box">
-          <form id="stylize-form" method="POST" action="{{ url_for('stylize') }}" enctype="multipart/form-data">
-            <input type="hidden" name="use_example_content" id="use_example_content" value="false">
-            <input type="hidden" name="example_content_filename" id="example_content_filename" value="{{ example_content_file if has_example else '' }}">
+        <!-- Upload Form - Two Column Layout -->
+        <div class="upload-box card shadow-sm mx-auto"> <!-- Width handled by CSS -->
+          <div class="card-body">
+            <form id="stylize-form" method="POST" action="{{ url_for('stylize') }}" enctype="multipart/form-data" class="needs-validation" novalidate>
+              <input type="hidden" name="use_example_content" id="use_example_content" value="false">
+              <input type="hidden" name="example_content_filename" id="example_content_filename" value="{{ example_content_file if has_example else '' }}">
 
-            <!-- Step 1: Content Image Upload -->
-            <div class="mb-3">
-              <label for="content_image_input" class="form-label">1. Choose Content Image:</label>
-              <input type="file" name="content_image" class="form-control" id="content_image_input" accept="image/*">
-              <small class="form-text text-muted">Or use the example below.</small>
-            </div>
+              <!-- Main Row for Content & Style -->
+              <div class="row g-lg-5 g-md-4 mb-4"> <!-- Gutters for spacing -->
 
-            {% if has_example %}
-            <div class="mb-3 text-center">
-              <button type="button" class="btn btn-secondary btn-sm" id="use-example-btn">Use Example Content & First Style</button>
-              <p id="example-info" class="form-text text-muted mt-1" style="display: none;">Using example content: {{ example_content_file }}</p>
-            </div>
-            {% endif %}
+                <!-- Column 1: Content Image Upload & Preview -->
+                <div class="col-lg-6">
+                  <div class="form-section"> <!-- Wrapper div -->
+                    <h5 class="mb-3">1. Content Image</h5>
+                    <div class="mb-3"> <!-- Group related elements -->
+                      <label for="content_image_input" class="form-label">Upload your photo:</label>
+                      <input type="file" name="content_image" class="form-control" id="content_image_input" accept="image/*" required>
+                      <div class="invalid-feedback">Please select your content image.</div>
+                      <small class="form-text text-muted">Max: 16MB (JPG, PNG, GIF).</small>
+                    </div>
+                    {% if has_example %}
+                    <div class="mt-2 mb-2"> <!-- Example button group, reduced mb-3 to mb-2 -->
+                        <button type="button" class="btn btn-outline-secondary btn-sm" id="use-example-btn">Use Example Content</button>
+                        <p id="example-info" class="form-text text-muted d-none">Using: {{ example_content_file }}</p>
+                    </div>
+                    {% endif %}
+                    <!-- Content Preview Box - Natural flow -->
+                    <div class="image-preview-box text-center" id="content-preview-box">
+                        <img id="content-preview" src="{{ url_for('static', filename='img_placeholder.png') }}" alt="Content Preview" class="img-thumbnail placeholder">
+                        <small class="d-block mt-1 text-muted preview-label">Content Preview</small>
+                    </div>
+                  </div> <!-- End form-section -->
+                </div><!-- End Column 1 -->
 
-            <!-- Step 2: Style Source Selection -->
-            <div class="mb-3">
-              <label class="form-label">2. Choose Style Source:</label>
-              <div>
-                <input type="radio" id="style_predefined_radio" name="style_choice" value="predefined" checked>
-                <label for="style_predefined_radio">Predefined Style</label>
-              </div>
-              <div>
-                <input type="radio" id="style_custom_radio" name="style_choice" value="custom">
-                <label for="style_custom_radio">Upload Custom Style</label>
-              </div>
-            </div>
+                <!-- Column 2: Style Source Selection & Preview -->
+                <div class="col-lg-6">
+                  <div class="form-section"> <!-- Wrapper div -->
+                    <h5 class="mb-3">2. Style Image</h5>
+                    <!-- Style Source Radios - Placed below header -->
+                    <div class="mb-2"> <!-- Reduced mb-3 to mb-2 -->
+                         <label class="form-label d-block mb-2">Choose style source:</label> <!-- Use label here for clarity -->
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" id="style_predefined_radio" name="style_choice" value="predefined" checked>
+                            <label class="form-check-label" for="style_predefined_radio">Select from Gallery</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" id="style_custom_radio" name="style_choice" value="custom">
+                            <label class="form-check-label" for="style_custom_radio">Upload Your Own</label>
+                        </div>
+                    </div>
 
-            <!-- Style Options -->
-            <div class="mb-3" id="predefined-style-section">
-              <label for="predefined_style_select" class="form-label">Select Predefined Style:</label>
-              <select name="predefined_style" id="predefined_style_select" class="form-select">
-                <option value="" disabled selected>Choose a style...</option>
-                {% for style in predefined_styles %}
-                  <option value="{{ style.filename }}">{{ style.display_name }}</option>
-                {% endfor %}
-                {% if not predefined_styles %}
-                  <option value="" disabled>No styles found in static/styles</option>
-                {% endif %}
-              </select>
-            </div>
+                    <!-- Style Options Container -->
+                    <div class="style-options-container"> <!-- mb handled by CSS -->
+                        <!-- Predefined Style Options -->
+                        <div id="predefined-style-section">
+                            <label for="predefined_style_select" class="form-label visually-hidden">Select Predefined Style:</label>
+                            <select name="predefined_style" id="predefined_style_select" class="form-select" required>
+                                <option value="" disabled selected>Choose a style...</option>
+                                {% for style in predefined_styles %}
+                                <option value="{{ style.filename }}" data-style-image="{{ url_for('static', filename='styles/' + style.filename) }}">
+                                    {{ style.display_name }}
+                                </option>
+                                {% endfor %}
+                                {% if not predefined_styles %}
+                                <option value="" disabled>No styles found</option>
+                                {% endif %}
+                            </select>
+                            <div class="invalid-feedback">Please select a predefined style.</div>
+                        </div>
 
-            <!-- Custom Style Upload -->
-            <div class="mb-3" id="custom-style-section" style="display: none;">
-              <label for="custom_style_input" class="form-label">Upload Custom Style Image:</label>
-              <input type="file" name="custom_style_image" id="custom_style_input" class="form-control" accept="image/*">
-            </div>
+                        <!-- Custom Style Upload -->
+                        <div id="custom-style-section" class="d-none">
+                            <label for="custom_style_input" class="form-label visually-hidden">Upload Custom Style Image:</label>
+                            <input type="file" name="custom_style_image" id="custom_style_input" class="form-control" accept="image/*">
+                            <div class="invalid-feedback">Please select your custom style image.</div>
+                            <small class="form-text text-muted mt-1">Max: 16MB (JPG, PNG, GIF).</small>
+                        </div>
+                    </div>
 
-            <!-- Step 3 & 4: Iteration Settings -->
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <label for="teacher_iterations_input" class="form-label">3. Teacher Iterations:</label>
-                <input type="number" name="teacher_iterations" id="teacher_iterations_input" class="form-control" value="50" min="1" max="1000">
-                <small class="form-text text-muted">More = slower, potentially better (VGG)</small>
-              </div>
-              <div class="col-md-6">
-                <label for="student_iterations_input" class="form-label">4. Student Iterations:</label>
-                <input type="number" name="student_iterations" id="student_iterations_input" class="form-control" value="1" min="1" max="10">
-                <small class="form-text text-muted">More = slower, refines output (Fast Model)</small>
-              </div>
-            </div>
+                   <!-- Style Preview Box - Natural flow -->
+                   <div class="image-preview-box text-center" id="style-preview-box">
+                        <img id="style-preview" src="{{ url_for('static', filename='img_placeholder.png') }}" alt="Style Preview" class="img-thumbnail placeholder">
+                        <small class="d-block mt-1 text-muted preview-label">Style Preview</small>
+                    </div>
+                  </div> <!-- End form-section -->
+                </div><!-- End Column 2 -->
 
-            <!-- Submit -->
-            <button type="submit" class="btn btn-primary w-100 mt-2">Stylize Image</button>
-          </form>
+              </div><!-- End Main Row -->
+
+              <!-- Row 3: Iteration Settings (Below Main Row) -->
+              <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="fine-tuning-section"> <!-- Removed form-section class -->
+                        <h5 class="mb-3 text-center">3. Fine-tune (Optional)</h5>
+                        <div class="row g-4 justify-content-center">
+                        <div class="col-md-5">
+                            <label for="teacher_iterations_input" class="form-label">Quality/Time (VGG):</label>
+                            <input type="number" name="teacher_iterations" id="teacher_iterations_input" class="form-control form-control-sm" value="50" min="5" max="500" step="5">
+                            <small class="form-text text-muted">Higher = more detail, slower. (Def: 50)</small>
+                        </div>
+                        <div class="col-md-5">
+                            <label for="student_iterations_input" class="form-label">Refinement (Fast Model):</label>
+                            <input type="number" name="student_iterations" id="student_iterations_input" class="form-control form-control-sm" value="1" min="1" max="5">
+                            <small class="form-text text-muted">Usually 1 is sufficient. (Def: 1)</small>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+              </div><!-- End Iteration Row -->
+
+              <!-- Submit Button -->
+              <button type="submit" class="btn btn-primary w-100 btn-lg mt-4 submit-button"> <!-- Increased top margin -->
+                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                Stylize Image
+              </button>
+            </form>
+          </div>
         </div>
-      </div>
-
-      <!-- Example Preview Image -->
-      <div class="header-example-image text-center mt-4 mt-lg-0">
-        <img src="{{ url_for('static', filename='example.png') }}" alt="Example stylized" class="example-image">
       </div>
     </div>
   </section>
 
   <!-- How It Works Section -->
-  <section class="how-it-works text-center py-5">
+  <section class="how-it-works text-center py-5" id="how-it-works-section">
     <div class="container">
-      <h2 class="how-it-works-title mb-5 fw-bold">Customize your design now</h2>
-      <p class="how-subtitle mb-5">How it works?</p>
-
-      <div class="d-flex flex-wrap justify-content-center align-items-center gap-5 how-it-works-flow position-relative">
-
+      <h2 class="section-title mb-3 fw-bold">How It Works</h2>
+      <p class="lead text-muted mb-5">Transform your images in three simple steps.</p>
+      <div class="row justify-content-center align-items-stretch gy-4 gy-md-0">
         <!-- Step 1: Upload Image -->
-        <div class="how-step position-relative">
-          <div class="flip-card">
-            <div class="flip-inner">
-              <img src="{{ url_for('static', filename='image.jfif') }}" alt="Upload Image" class="how-image front">
-              <img src="{{ url_for('static', filename='mountain.jpg') }}" alt="Hover Image" class="how-image back">
-            </div>
-          </div>
-          <div class="step-number">1</div>
-          <h5 class="fw-semibold">Upload your image</h5>
-        </div>
-
+        <div class="col-lg-3 col-md-4"><div class="how-step card h-100"><div class="flip-card mx-auto"><div class="flip-inner"><img src="{{ url_for('static', filename='image.jfif') }}" alt="Upload Image" class="how-image front"><img src="{{ url_for('static', filename='mountain.jpg') }}" alt="Hover Image" class="how-image back"></div></div><div class="step-number">1</div><div class="card-body d-flex flex-column"><h5 class="mt-3 fw-semibold card-title">Upload Your Photo</h5><p class="step-desc card-text mt-auto">Select the image you want to restyle.</p></div></div></div>
         <!-- Arrow 1 -->
-        <img src="{{ url_for('static', filename='arrow.png') }}" class="fancy-arrow" alt="Arrow">
-
+        <div class="col-lg-1 d-none d-lg-flex align-items-center justify-content-center"><img src="{{ url_for('static', filename='arrow.png') }}" class="fancy-arrow" alt="Arrow"></div>
         <!-- Step 2: Choose Style -->
-        <div class="how-step position-relative">
-          <div class="flip-card">
-            <div class="flip-inner">
-              <img src="{{ url_for('static', filename='style.png') }}" alt="Choose Style" class="how-image front">
-              <img src="{{ url_for('static', filename='mystyle.jpg') }}" alt="Hover Style" class="how-image back">
-            </div>
-          </div>
-          <div class="step-number">2</div>
-          <h5 class="fw-semibold">Choose your style</h5>
-        </div>
-
+        <div class="col-lg-3 col-md-4"><div class="how-step card h-100"><div class="flip-card mx-auto"><div class="flip-inner"><img src="{{ url_for('static', filename='style.png') }}" alt="Choose Style" class="how-image front"><img src="{{ url_for('static', filename='mystyle.jpg') }}" alt="Hover Style" class="how-image back"></div></div><div class="step-number">2</div><div class="card-body d-flex flex-column"><h5 class="mt-3 fw-semibold card-title">Select a Style</h5><p class="step-desc card-text mt-auto">Pick from gallery or upload your own.</p></div></div></div>
         <!-- Arrow 2 -->
-        <img src="{{ url_for('static', filename='arrow.png') }}" class="fancy-arrow" alt="Arrow">
-
+        <div class="col-lg-1 d-none d-lg-flex align-items-center justify-content-center"><img src="{{ url_for('static', filename='arrow.png') }}" class="fancy-arrow" alt="Arrow"></div>
         <!-- Step 3: Magic Happens -->
-        <div class="how-step position-relative">
-          <div class="flip-card">
-            <div class="flip-inner">
-              <img src="{{ url_for('static', filename='magic.png') }}" alt="Magic" class="how-image front">
-              <img src="{{ url_for('static', filename='result.png') }}" alt="Stylized Result" class="how-image back">
-            </div>
-          </div>
-          <div class="step-number">3</div>
-          <h5 class="fw-semibold">Magic ✨</h5>
-        </div>
-
-        <!-- Upload CTA Button -->
-        <div class="w-100 text-center mt-1">
-          <a href="#upload-section" class="btn btn-primary btn-lg scroll-to-upload d-inline-flex align-items-center gap-2">
-            <img src="{{ url_for('static', filename='upload-icon.jpg') }}" alt="Upload Icon" width="24" height="24">
-            Upload Image
-          </a>
-        </div>
-
+        <div class="col-lg-3 col-md-4"><div class="how-step card h-100"><div class="flip-card mx-auto"><div class="flip-inner"><img src="{{ url_for('static', filename='magic.png') }}" alt="Magic" class="how-image front"><img src="{{ url_for('static', filename='result.png') }}" alt="Stylized Result" class="how-image back"></div></div><div class="step-number">3</div><div class="card-body d-flex flex-column"><h5 class="mt-3 fw-semibold card-title">Generate & Download</h5><p class="step-desc card-text mt-auto">AI blends content and style. Download!</p></div></div></div>
       </div>
+       <!-- Upload CTA Button -->
+        <div class="text-center mt-5"><a href="#upload-section" class="btn btn-primary btn-lg scroll-to-upload d-inline-flex align-items-center gap-2 shadow-sm"><i class="bi bi-upload fs-5"></i> Start Creating Now</a></div>
     </div>
   </section>
 
   <!-- Style Gallery Section -->
-  <section class="style-gallery" id="gallery-section">
-    <h2>Explore <span class="cinzel">Styliques</span></h2>
-    <div class="style-gallery-content">
-      <button class="nav-arrow" id="prev-style-btn">❮</button>
-      <div id="carousel" class="flex-grow-1">
-         <!-- Carousel content will be loaded by JS -->
-         Loading styles...
-      </div>
-      <button class="nav-arrow" id="next-style-btn">❯</button>
+  <section class="style-gallery py-5" id="gallery-section">
+     <div class="container">
+        <h2 class="section-title text-center mb-5">Explore <span class="cinzel">Style Gallery</span></h2>
+        <div class="style-gallery-content">
+          <button class="nav-arrow prev-style-btn" id="prev-style-btn" aria-label="Previous Style"><i class="bi bi-chevron-left"></i></button>
+          <div id="carousel" class="flex-grow-1 overflow-hidden"><div class="d-flex justify-content-center align-items-center h-100"><div class="spinner-border text-light" role="status"><span class="visually-hidden">Loading styles...</span></div></div></div>
+          <button class="nav-arrow next-style-btn" id="next-style-btn" aria-label="Next Style"><i class="bi bi-chevron-right"></i></button>
+        </div>
     </div>
   </section>
 
   <!-- Featured Artwork Curtain Slider Section -->
   <section class="featured-artwork text-center py-5" id="featured-artwork">
     <div class="container">
-      <h2 class="featured-title mb-4">Featured Artwork</h2>
-      <div class="curtain-gallery-wrapper position-relative">
-        <button class="nav-arrow" id="prev-artwork">❮</button>
-        <div class="curtain-display"></div>
-        <button class="nav-arrow" id="next-artwork">❯</button>
+      <h2 class="section-title mb-4">Featured Artwork Comparison</h2>
+       <p class="lead text-muted mb-5">Drag the slider to compare original photos with their stylized versions.</p>
+      <div class="curtain-gallery-wrapper mx-auto position-relative">
+        <button class="nav-arrow prev-artwork-btn" id="prev-artwork" aria-label="Previous Artwork"><i class="bi bi-chevron-left"></i></button>
+        <div class="curtain-display-container shadow-lg rounded overflow-hidden"><div class="d-flex justify-content-center align-items-center h-100 bg-secondary-subtle"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading artwork...</span></div></div></div>
+        <button class="nav-arrow next-artwork-btn" id="next-artwork" aria-label="Next Artwork"><i class="bi bi-chevron-right"></i></button>
       </div>
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer>
-    <a href="#top">
-      <img src="{{ url_for('static', filename='logo.png') }}" alt="Stylique Logo" class="logo-img">
-    </a>
-    <p>© 2025 Stylique. All Rights Reserved.</p>
-  </footer>
+{% endblock %}
 
-  <!-- Bootstrap Bundle JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+{% block scripts %}
 
-  <!-- Curtain Slider Logic -->
-  <script>
-    const artworks = [
-      { before: 'artwork1.jpg', after: 'artwork1_after.png' },
-      { before: 'artwork2.jpg', after: 'artwork2_after.png' },
-      { before: 'artwork3.jpg', after: 'artwork3_after.png' },
-      { before: 'artwork4.jpg', after: 'artwork4_after.png' }
-    ];
+  <script> $(document).ready(function() { const artworks = [ { before: 'artwork1.jpg', after: 'artwork1_after.png' }, { before: 'artwork2.jpg', after: 'artwork2_after.png' }, { before: 'artwork3.jpg', after: 'artwork3_after.png' }, { before: 'artwork4.jpg', after: 'artwork4_after.png' } ]; let currentIndex = 0; const baseStaticPath = "{{ url_for('static', filename='') }}"; function loadArtwork(index) { const displayContainer = $('.curtain-display-container'); displayContainer.empty(); const beforeImagePath = baseStaticPath + artworks[index].before; const afterImagePath = baseStaticPath + artworks[index].after; const twentyTwentyHTML = `<div class="twentytwenty-container" style="min-height: 300px;"><img src="${beforeImagePath}" alt="Before ${index + 1}"><img src="${afterImagePath}" alt="After ${index + 1}"></div>`; displayContainer.html(twentyTwentyHTML); displayContainer.find('.twentytwenty-container').twentytwenty({ default_offset_pct: 0.5, orientation: 'horizontal', before_label: 'Before', after_label: 'After', no_overlay: false, move_slider_on_hover: false, move_with_handle_only: true, click_to_move: false }); } $('#prev-artwork').on('click', function() { currentIndex = (currentIndex - 1 + artworks.length) % artworks.length; loadArtwork(currentIndex); }); $('#next-artwork').on('click', function() { currentIndex = (currentIndex + 1) % artworks.length; loadArtwork(currentIndex); }); if (artworks.length > 0) { loadArtwork(currentIndex); } else { $('.curtain-display-container').html('<p class="text-center p-5 text-muted-light">No artwork available.</p>'); } }); </script>
+   <script> document.addEventListener('DOMContentLoaded', function() { let currentSlide = 0; const styles = [ { name: "Mosaic", filename: "mosaic.jpg", descLeft: "Ancient Tesserae", descRight: "Fragmented Textures" }, { name: "Mona Lisa", filename: "monalisa.jpg", descLeft: "Renaissance Portrait", descRight: "Subtle Sfumato" }, { name: "Starry Night", filename: "night.jpg", descLeft: "Post-Impressionism", descRight: "Expressive Swirls" }, { name: "The Great Wave", filename: "wave.jpg", descLeft: "Ukiyo-e Woodblock", descRight: "Dynamic Composition" }, { name: "Pixel Art", filename: "pixel.png", descLeft: "Retro Digital", descRight: "Blocky Aesthetic" }, ]; const baseStylePath = "{{ url_for('static', filename='styles/') }}"; const frameImagePath = "{{ url_for('static', filename='frame.jpg') }}"; function renderSlide() { const container = document.getElementById('carousel'); if (!container) return; if (styles.length === 0) { container.innerHTML = '<p class="text-center text-light">No styles available.</p>'; return; } const style = styles[currentSlide]; const orientationClass = (style.name === "The Great Wave" || style.name === "Pixel Art") ? 'landscape' : ''; const styleImagePath = baseStylePath + style.filename; container.innerHTML = `<div class="style-item ${orientationClass} invisible"><div class="style-row"><div class="style-desc">${style.descLeft || 'Style Aspect'}</div><div class="frame-container"><img src="${styleImagePath}" class="framed-style" alt="${style.name}" title="Style: ${style.name}"></div><div class="style-desc">${style.descRight || 'Artistic Feature'}</div></div><span class="style-text">${style.name}</span></div>`; setTimeout(() => { const newItem = container.querySelector('.style-item'); if (newItem) { newItem.classList.remove('invisible'); newItem.classList.add('visible'); } }, 50); } function showPreviousSlide() { currentSlide = (currentSlide - 1 + styles.length) % styles.length; renderSlide(); } function showNextSlide() { currentSlide = (currentSlide + 1) % styles.length; renderSlide(); } if (styles.length > 0) { renderSlide(); document.getElementById('prev-style-btn')?.addEventListener('click', showPreviousSlide); document.getElementById('next-style-btn')?.addEventListener('click', showNextSlide); } else { document.getElementById('carousel').innerHTML = '<p class="text-center text-light">No styles available.</p>'; } }); </script>
 
-    let currentIndex = 0;
+   <script> (function () { 'use strict'; var forms = document.querySelectorAll('.needs-validation'); Array.prototype.slice.call(forms).forEach(function (form) { form.addEventListener('submit', function (event) { let firstInvalidElement = null; if (!form.checkValidity()) { event.preventDefault(); event.stopPropagation(); const invalidInputs = form.querySelectorAll(':invalid'); if (invalidInputs.length > 0) { firstInvalidElement = invalidInputs[0]; firstInvalidElement.focus(); } } else { const submitButton = form.querySelector('.submit-button'); const spinner = submitButton.querySelector('.spinner-border'); if (spinner) spinner.classList.remove('d-none'); if (submitButton) submitButton.disabled = true; } form.classList.add('was-validated'); }, false) }); const contentInput = document.getElementById('content_image_input'); const contentPreview = document.getElementById('content-preview'); const styleInput = document.getElementById('custom_style_input'); const stylePreview = document.getElementById('style-preview'); const predefinedSelect = document.getElementById('predefined_style_select'); const styleChoiceRadios = document.querySelectorAll('input[name="style_choice"]'); const customStyleSection = document.getElementById('custom-style-section'); const predefinedStyleSection = document.getElementById('predefined-style-section'); const placeholderImg = "{{ url_for('static', filename='img_placeholder.png') }}"; const exampleBtn = document.getElementById('use-example-btn'); const exampleInfo = document.getElementById('example-info'); const useExampleHidden = document.getElementById('use_example_content'); const exampleContentFilename = document.getElementById('example_content_filename')?.value || ''; const exampleContentPath = "{{ url_for('static', filename='content_examples/' + example_content_file) if has_example else '' }}"; function displayImagePreview(input, previewElement) { const file = input.files[0]; if (file) { const reader = new FileReader(); reader.onload = function(e) { previewElement.src = e.target.result; previewElement.classList.remove('placeholder'); input.setCustomValidity(''); }; reader.readAsDataURL(file); if (input === contentInput) { useExampleHidden.value = 'false'; if(exampleInfo) exampleInfo.classList.add('d-none'); contentInput.setAttribute('required', 'required'); } } else { previewElement.src = placeholderImg; previewElement.classList.add('placeholder'); } input.dispatchEvent(new Event('change', { bubbles: true })); } if(contentInput && contentPreview) { contentPreview.classList.add('placeholder'); contentInput.addEventListener('change', () => displayImagePreview(contentInput, contentPreview)); } if(styleInput && stylePreview) { stylePreview.classList.add('placeholder'); styleInput.addEventListener('change', () => displayImagePreview(styleInput, stylePreview)); } if(predefinedSelect && stylePreview) { predefinedSelect.addEventListener('change', function() { const selectedOption = this.options[this.selectedIndex]; const styleImageUrl = selectedOption.dataset.styleImage; if(styleImageUrl && this.value) { stylePreview.src = styleImageUrl; stylePreview.classList.remove('placeholder'); this.setCustomValidity(''); } else { stylePreview.src = placeholderImg; stylePreview.classList.add('placeholder'); if (this.hasAttribute('required') && !this.value) { this.setCustomValidity('Please select a style.'); } else { this.setCustomValidity(''); } } this.dispatchEvent(new Event('change', { bubbles: true })); }); } styleChoiceRadios.forEach(radio => { radio.addEventListener('change', function() { const isCustom = this.value === 'custom'; customStyleSection.classList.toggle('d-none', !isCustom); predefinedStyleSection.classList.toggle('d-none', isCustom); if (isCustom) { styleInput.setAttribute('required', 'required'); predefinedSelect.removeAttribute('required'); predefinedSelect.value = ""; if (styleInput.files[0]) { displayImagePreview(styleInput, stylePreview); } else { stylePreview.src = placeholderImg; stylePreview.classList.add('placeholder'); } } else { styleInput.removeAttribute('required'); styleInput.value = ''; predefinedSelect.setAttribute('required', 'required'); const selectedOption = predefinedSelect.options[predefinedSelect.selectedIndex]; const styleImageUrl = selectedOption.dataset.styleImage; if (styleImageUrl && predefinedSelect.value) { stylePreview.src = styleImageUrl; stylePreview.classList.remove('placeholder'); } else { stylePreview.src = placeholderImg; stylePreview.classList.add('placeholder'); } } styleInput.dispatchEvent(new Event('change', { bubbles: true })); predefinedSelect.dispatchEvent(new Event('change', { bubbles: true })); }); }); if (exampleBtn && exampleContentPath) { exampleBtn.addEventListener('click', function() { if (contentPreview && useExampleHidden && exampleInfo && contentInput) { contentPreview.src = exampleContentPath; contentPreview.classList.remove('placeholder'); useExampleHidden.value = 'true'; exampleInfo.classList.remove('d-none'); contentInput.removeAttribute('required'); contentInput.value = ''; contentInput.classList.remove('is-invalid'); contentInput.setCustomValidity(''); contentInput.dispatchEvent(new Event('change', { bubbles: true })); } }); } const initialStyleChoice = document.querySelector('input[name="style_choice"]:checked'); if (initialStyleChoice) { initialStyleChoice.dispatchEvent(new Event('change')); } else if (styleChoiceRadios.length > 0) { document.getElementById('style_predefined_radio').checked = true; document.getElementById('style_predefined_radio').dispatchEvent(new Event('change')); } })(); </script>
 
-    function loadArtwork(index) {
-      const display = document.querySelector('.curtain-display');
-      const base = `{{ url_for('static', filename='') }}`;
-
-      display.innerHTML = `
-        <div class="curtain-wrapper" id="curtain-wrapper">
-          <img src="${base}${artworks[index].before}" class="curtain-img" alt="Before">
-          <div class="curtain-overlay" id="curtain-overlay">
-            <img src="${base}${artworks[index].after}" class="curtain-img" alt="After">
-          </div>
-          <div class="slider-handle" id="slider-handle"></div>
-        </div>
-      `;
-
-      const wrapper = document.getElementById('curtain-wrapper');
-      const overlay = document.getElementById('curtain-overlay');
-      const handle = document.getElementById('slider-handle');
-
-      wrapper.addEventListener('mousemove', (e) => {
-        const rect = wrapper.getBoundingClientRect();
-        let x = e.clientX - rect.left;
-        x = Math.max(0, Math.min(x, rect.width));
-        const percent = (x / rect.width) * 100;
-        overlay.style.width = `${percent}%`;
-        handle.style.left = `${percent}%`;
-      });
-    }
-
-    document.getElementById('prev-artwork').addEventListener('click', () => {
-      currentIndex = (currentIndex - 1 + artworks.length) % artworks.length;
-      loadArtwork(currentIndex);
-    });
-
-    document.getElementById('next-artwork').addEventListener('click', () => {
-      currentIndex = (currentIndex + 1) % artworks.length;
-      loadArtwork(currentIndex);
-    });
-
-    document.addEventListener('DOMContentLoaded', () => {
-      loadArtwork(currentIndex);
-    });
-  </script>
-
-  <!-- Smooth Scroll for Upload Button -->
-  <script>
-    document.querySelectorAll('.scroll-to-upload').forEach(btn => {
-      btn.addEventListener('click', function(e) {
-        e.preventDefault();
-        document.getElementById('upload-section').scrollIntoView({ behavior: 'smooth' });
-      });
-    });
-  </script>
-
-  <!-- Smooth Scroll for Logo Links -->
-  <script>
-    document.querySelectorAll('a[href="#top"]').forEach(link => {
-      link.addEventListener('click', e => {
-        e.preventDefault();
-        document.getElementById('top').scrollIntoView({ behavior: 'smooth' });
-      });
-    });
-  </script>
-
-  <!-- Style Gallery Script -->
-  <script>
-    let currentSlide = 0;
-    const styles = [
-      { name: "Mosaic", image: "{{ url_for('static', filename='styles/mosaic.jpg') }}", descLeft: "Ancient Art", descRight: "Technique using small pieces" },
-      { name: "Mona Lisa", image: "{{ url_for('static', filename='styles/monalisa.jpg') }}", descLeft: "High Renaissance", descRight: "Famous for sfumato" },
-      { name: "The Scream", image: "{{ url_for('static', filename='styles/night.jpg') }}", descLeft: "Post-Impressionism", descRight: "Expressive brushwork" },
-      { name: "The Great Wave", image: "{{ url_for('static', filename='styles/wave.jpg') }}", descLeft: "Ukiyo-e", descRight: "Japanese woodblock print" },
-      { name: "Pixel Art", image: "{{ url_for('static', filename='styles/pixel.png') }}", descLeft: "Digital Art", descRight: "Blocky, retro aesthetic" },
-    ];
-
-    function renderSlide() {
-      const container = document.getElementById('carousel');
-      if (!container || styles.length === 0) {
-        container.innerHTML = '<p class="text-center text-white">No styles available to display.</p>';
-        return;
-      }
-
-      const style = styles[currentSlide];
-      const orientationClass = (style.name === "The Great Wave" || style.name === "Pixel Art") ? 'landscape' : '';
-
-      container.innerHTML = `
-        <div class="style-item ${orientationClass}">
-          <div class="style-row">
-            <div class="style-desc">${style.descLeft || 'Style Aspect'}</div>
-            <div class="frame-container">
-              <img src="{{ url_for('static', filename='frame.jpg') }}" class="frame-background" alt="Frame">
-              <img src="${style.image}" class="framed-style" alt="${style.name}" title="Style: ${style.name}">
-            </div>
-            <div class="style-desc">${style.descRight || 'Artistic Feature'}</div>
-          </div>
-          <span class="style-text">${style.name}</span>
-        </div>
-      `;
-
-      setTimeout(() => {
-        const newItem = container.querySelector('.style-item');
-        if (newItem) newItem.classList.add('visible');
-      }, 50);
-    }
-
-    function showPreviousSlide() {
-      currentSlide = (currentSlide - 1 + styles.length) % styles.length;
-      renderSlide();
-    }
-
-    function showNextSlide() {
-      currentSlide = (currentSlide + 1) % styles.length;
-      renderSlide();
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-      renderSlide();
-      document.getElementById('prev-style-btn').addEventListener('click', showPreviousSlide);
-      document.getElementById('next-style-btn').addEventListener('click', showNextSlide);
-    });
-  </script>
-
-</body>
-</html>
+{% endblock %}

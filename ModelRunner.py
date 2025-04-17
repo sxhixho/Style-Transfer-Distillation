@@ -3,7 +3,7 @@ import time
 import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
-from classes.DataProcessor import DataProcessor
+from DataProcessor import DataProcessor
 
 class ModelRunner:
     """
