@@ -2,6 +2,8 @@
 
 This project implements a **Neural Style Transfer** pipeline that uses a high-quality VGG19-based *teacher model* and a lightweight, real-time *student model* trained via knowledge distillation. Designed for deployment, it features a Flask web interface and is containerized with Docker for cloud readiness.
 
+Deployed on: https://styliqueai.azurewebsites.net/
+
 ---
 
 ## Features
